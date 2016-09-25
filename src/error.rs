@@ -15,6 +15,7 @@ enum ErrorType {
     Default,
     Process,
     Utf8,
+    Protocol,
 }
 
 /// Ispell Result type
@@ -53,6 +54,16 @@ impl Error {
         Error {
             msg: msg.into(),
             variant: ErrorType::Utf8,
+        }
+    }
+
+    /// Creates a new protocol error
+    ///
+    /// (when we didn't understand ispell output)
+    pub fn protocol<S: Into<String>>(msg: S) -> Error {
+        Error {
+            msg: msg.into(),
+            variant: ErrorType::Protocol,
         }
     }
 }

@@ -26,9 +26,9 @@ impl SpellChecker {
 
         // Skip the introduction
         // Read the first line that displays Version
+        try!(checker.write_str(""));
         try!(checker.read_str());
 
-        println!("foo");
         Ok(checker)        
     }
 
@@ -70,17 +70,24 @@ impl SpellChecker {
         try!(self.write_str(text));
 
         let words = text.split_whitespace().count();
-        let mut lines = 0;
+        let mut n_lines = 0;
 
-        while lines < words {
+        while n_lines < words {
             let s = try!(self.read_str());
             print!("{}", s);
-            let count = s.lines().count();
-            lines += count;
+            for line in s.lines() {
+                n_lines += 1;
+                if n_lines >= words {
+                    break;
+                }
+                let first = line.chars().next().unwrap();
+                match first {
+                    '*' => println!("OK"),
+                    '&' => println!("Error: {}", line),
+                    _ => println!("???: {}", line),//return Err(Error::protocol(format!("expected '&' or '*', found '{}'", first)))
+                }
+            }
         }
-        
-
-        
         
         Ok(())
     }    
@@ -88,6 +95,7 @@ impl SpellChecker {
 
 impl Drop for SpellChecker {
     fn drop(&mut self) {
+        // We could do this more nicely 
         self.ispell.kill().unwrap();
     }
 }
