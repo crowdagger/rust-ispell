@@ -8,4 +8,4 @@ keywords = ["ispell", "aspell", "spell checking"]
 repository = "https://github.com/lise-henry/rust-ispell"
 documentation = "https://lise-henry.github.io/rust-ispell/ispell/"
 license = "MPL-2.0"
-exclude = ["docs/**/*.html", "docs/**/*.js"]
+exclude = ["docs/**"]
