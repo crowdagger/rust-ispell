@@ -1,8 +1,13 @@
 rust-ispell 
 ===========
 
-The purpose of this library is to allow to easily use a spell checking
-command compatible with `ispell` from Rust.
+This library allows to easily use `ispell` or `aspell` from Rust.
+
+```
+ispell = "0.1"
+```
+
+For more information about using this library, see the [API documentation](https://lise-henry.github.io/rust-ispell/ispell/).
 
 License 
 -------
