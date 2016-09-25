@@ -5,12 +5,16 @@
 use std::error;
 use std::result;
 use std::fmt;
+use std::string::FromUtf8Error;
+use std::io;
 
 /// Internal ErrorType
 #[derive(Debug, PartialEq)]
 enum ErrorType {
     /// Default
     Default,
+    Process,
+    Utf8,
 }
 
 /// Ispell Result type
@@ -31,6 +35,26 @@ impl Error {
             variant: ErrorType::Default,
         }
     }
+
+    /// Create a new process error
+    ///
+    /// (for errors launching Ispell)
+    pub fn process<S: Into<String>>(msg: S) -> Error {
+        Error {
+            msg: msg.into(),
+            variant: ErrorType::Process
+        }
+    }
+
+    /// Create a new UTF8 error
+    ///
+    /// (for errors converting to UTF8)
+    pub fn utf8<S: Into<String>>(msg: S) -> Error {
+        Error {
+            msg: msg.into(),
+            variant: ErrorType::Utf8,
+        }
+    }
 }
 
 impl error::Error for Error {
@@ -45,4 +69,14 @@ impl fmt::Display for Error {
     }
 }
 
+impl From<FromUtf8Error> for Error {
+    fn from(err: FromUtf8Error) -> Error {
+        Error::utf8(format!("error decoding ispell output to utf8: {}", err))
+    }
+}
 
+impl From<io::Error> for Error {
+    fn from(err: io::Error) -> Error {
+        Error::process(format!("error while reading/writing to ispell: {}", err))
+    }
+}

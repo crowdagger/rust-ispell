@@ -13,4 +13,6 @@ fn main() {
         .launch()
         .unwrap();
     checker.check("test of a msitake");
+    checker.check("test without mistake (?)");
+    checker.check("Another test wiht a mistake");
 }

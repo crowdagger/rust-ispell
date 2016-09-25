@@ -4,6 +4,9 @@
 
 use std::process::Command;
 use std::process::Stdio;
+use std::io;
+use std::io::Read;
+use std::io::Write;
 
 use spell_checker::SpellChecker;
 use error::{Result, Error};
@@ -64,9 +67,8 @@ impl SpellLauncher {
             .spawn();
 
         match res {
-            Ok(child) => Ok(SpellChecker::new(child)),
-            Err(err) => Err(Error::new(format!("could not successfully spawn '{}' command: {}", self.command, err)))
+            Ok(child) => SpellChecker::new(child),
+            Err(err) => Err(Error::process(format!("could not successfully spawn '{}' command: {}", self.command, err)))
         }
-        
     }
 }
