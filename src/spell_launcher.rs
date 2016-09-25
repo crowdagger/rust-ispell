@@ -13,8 +13,10 @@ use error::{Result, Error};
 
 #[derive(Debug)]
 pub struct SpellLauncher {
-    lang: String,
-    command: String,
+    lang: Option<String>,
+    dict: Option<String>,
+    command: Option<String>,
+    aspell: bool,
 }
 
 /// Spell Launcher wizard (ah, ah).
@@ -26,49 +28,96 @@ pub struct SpellLauncher {
 /// ```
 /// use ispell::SpellLauncher;
 /// let checker = SpellLauncher::new()
-///                 .command("aspell") 
-///                 .language("en")
-///                 .launch()
-///                 .unwrap();
+///               .aspell()
+///               .launch()
+///               .unwrap();
 /// ```
 impl SpellLauncher {
     /// Creates a new spell checker with default options
     pub fn new() -> SpellLauncher {
         SpellLauncher {
-            lang: "en".to_owned(),
-            command: "ispell".to_owned(),
+            lang: None,
+            command: None,
+            dict: None,
+            aspell: false,
         }
     }
 
     /// Set the name of the command to run
     ///
-    /// By default, set to "ispell"
+    /// By default, it is "ispell" or "aspell" if the `aspell` flag has been set.
     pub fn command<S: Into<String>>(&mut self, command: S) -> &mut SpellLauncher {
-        self.command = command.into();
+        self.command = Some(command.into());
         self
     }
 
+    /// Set the dictionary that should be used
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use ispell::SpellLauncher;
+    /// let checker = SpellLauncher::new()
+    ///               .dictionary("american")
+    ///               .launch()
+    ///               .unwrap();
+    /// ``
+    pub fn dictionary<S: Into<String>>(&mut self, dict: S) -> &mut SpellLauncher {
+        self.dict = Some(dict.into());
+        self
+    }
+    
     /// Set the language for spell checking
     ///
-    /// By default, set to "en"
+    /// Used only if the `aspell` flag has been set, else use `dictionary`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ispell::SpellLauncher;
+    /// let checker = SpellLauncher::new()
+    ///               .aspell()
+    ///               .language("en_GB")
+    ///               .launch()
+    ///               .unwrap();
+    /// ```
     pub fn language<S: Into<String>>(&mut self, lang: S) -> &mut SpellLauncher {
-        self.lang = lang.into();
+        self.lang = Some(lang.into());
         self
     }
 
     /// Launch a SpellChecker
     pub fn launch(&self) -> Result<SpellChecker> {
-        let res = Command::new(&self.command)
-            .arg("-l")
-            .arg(&self.lang)
+        let command_name: &str = if let Some(ref command) = self.command {
+            command
+        } else {
+            if self.aspell {
+                "aspell"
+            } else {
+                "ispell"
+            }
+        };
+        let mut command = Command::new(command_name);
+        command
             .arg("-a")
             .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .spawn();
+            .stdout(Stdio::piped());
+        if self.aspell {
+            command.args(&["--encoding", "utf-8"]);
+            if let Some(ref lang) = self.lang {
+                command.arg("-l")
+                    .arg(lang);
+            }
+        }
+        if let Some(ref dict) = self.dict {
+            command.arg("-d")
+                .arg(dict);
+        }
+        let res = command.spawn();
 
         match res {
             Ok(child) => SpellChecker::new(child),
-            Err(err) => Err(Error::process(format!("could not successfully spawn '{}' command: {}", self.command, err)))
+            Err(err) => Err(Error::process(format!("could not successfully spawn process '{}': {}", command_name, err)))
         }
     }
 }

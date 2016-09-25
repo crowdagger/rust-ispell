@@ -5,14 +5,22 @@
 extern crate ispell;
 use ispell::SpellLauncher;
 
-
 fn main() {
-    let mut checker = SpellLauncher::new()
-        .command("aspell")
-        .language("en")
-        .launch()
-        .unwrap();
-    checker.check("test of a msitake");
-    checker.check("test without mistake (?)");
-    checker.check("Another test wiht a mistake");
+    let checker = SpellLauncher::new()
+        .command("ispell")
+        .launch();
+    match checker {
+        Ok(mut checker) => {
+            let res = checker.check("test of a msitake").unwrap();
+            println!("res: {:?}", res);
+            let res = checker.check("test without mistake (?)").unwrap();
+            println!("res: {:?}", res);
+            let res = checker.check("Another test wiht a mistake").unwrap();
+            println!("res: {:?}", res);
+            
+            let res = checker.check("killmaster").unwrap();
+            println!("res: {:?}", res);
+        },
+        Err(err) => println!("Error: {}", err)
+    }
 }

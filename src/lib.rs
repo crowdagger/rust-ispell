@@ -5,6 +5,7 @@
 mod spell_checker;
 mod spell_launcher;
 mod error;
+mod ispell_result;
 
 pub use spell_checker::SpellChecker;
 pub use spell_launcher::SpellLauncher;
