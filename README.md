@@ -1,7 +1,7 @@
 rust-ispell 
 ===========
 
-The purpose of this library is to allow te easily use a spell checking
+The purpose of this library is to allow to easily use a spell checking
 command compatible with `ispell` from Rust.
 
 License 
