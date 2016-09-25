@@ -1,11 +1,11 @@
 [package]
 name = "ispell"
-version = "0.1.0-unreleased"
+version = "0.1.0"
 authors = ["Elisabeth Henry <liz.henry@ouvaton.org>"]
 description = "Rust library to run ispell (or compatible) spell checking program"
 readme = "README.md"
 keywords = ["ispell"]
-publish = false
 license = "MPL-2.0"
+exclude = ["docs/**/*.html", "docs/**/*.js"]
 
 [dependencies]
