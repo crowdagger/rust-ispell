@@ -3,7 +3,10 @@
 // this file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 
 mod spell_checker;
+mod spell_launcher;
+mod error;
 
 pub use spell_checker::SpellChecker;
-
-
+pub use spell_launcher::SpellLauncher;
+pub use error::Error;
+pub use error::Result;
