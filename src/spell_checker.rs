@@ -14,13 +14,22 @@ const BUF_LEN: usize = 42;
 /// Spell Checker
 ///
 /// Checks the spelling of a list of words
+///
+/// # Example
+///
+/// ```
+/// use ispell::SpellLauncher;
+/// let mut checker = SpellLauncher::new().launch().unwrap();
+/// let errors = checker.check("This should not contain any error").unwrap();
+/// assert!(errors.is_empty());
+/// ```
 pub struct SpellChecker {
     ispell: Child,
 }
 
 impl SpellChecker {
     /// Creates a new spell checker from a running process
-    #[doc(Hidden)]
+    #[doc(hidden)]
     pub fn new(process: Child) -> Result<SpellChecker> {
         let mut checker = SpellChecker {
             ispell: process,

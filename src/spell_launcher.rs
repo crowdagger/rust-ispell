@@ -8,14 +8,6 @@ use std::process::Stdio;
 use spell_checker::SpellChecker;
 use error::{Result, Error};
 
-#[derive(Debug)]
-pub struct SpellLauncher {
-    lang: Option<String>,
-    dict: Option<String>,
-    command: Option<String>,
-    aspell: bool,
-}
-
 /// Spell Launcher wizard (ah, ah).
 ///
 /// Runs `ispell` or one of its variant for you.
@@ -42,6 +34,14 @@ pub struct SpellLauncher {
 ///               .launch()
 ///               .unwrap();
 /// ```
+#[derive(Debug)]
+pub struct SpellLauncher {
+    lang: Option<String>,
+    dict: Option<String>,
+    command: Option<String>,
+    aspell: bool,
+}
+
 impl SpellLauncher {
     /// Creates a new spell checker with default options
     pub fn new() -> SpellLauncher {
@@ -61,7 +61,7 @@ impl SpellLauncher {
     
     /// Set the name of the command to run
     ///
-    /// By default, it is "ispell" or "aspell" if the `aspell` flag has been set.
+    /// By default, it is "ispell", or "aspell" if the `aspell` flag has been set.
     pub fn command<S: Into<String>>(&mut self, command: S) -> &mut SpellLauncher {
         self.command = Some(command.into());
         self
@@ -83,9 +83,9 @@ impl SpellLauncher {
         self
     }
     
-    /// Set the language for spell checking
+    /// Set the language option for aspell.
     ///
-    /// Used only if the `aspell` flag has been set, else use `dictionary`.
+    /// Used only if the `aspell` flag has been set, else use `dictionary`. (Avoid mixing the two.)
     ///
     /// # Example
     ///
@@ -102,7 +102,7 @@ impl SpellLauncher {
         self
     }
 
-    /// Launch a SpellChecker
+    /// Launch `ispell` (or `aspell`) and return a `SpellChecker`
     pub fn launch(&self) -> Result<SpellChecker> {
         let command_name: &str = if let Some(ref command) = self.command {
             command

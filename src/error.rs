@@ -18,11 +18,11 @@ enum ErrorType {
     Protocol,
 }
 
-/// Ispell Result type
+/// Result type (returned by most methods of this library)
 pub type Result<T> = result::Result<T, Error>;
 
 #[derive(Debug, PartialEq)]
-/// Ispell Error type
+/// Error type returned by methods of this library
 pub struct Error {
     msg: String,
     variant: ErrorType
