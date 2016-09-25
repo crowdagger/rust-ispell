@@ -7,6 +7,8 @@ mod spell_launcher;
 mod error;
 mod ispell_result;
 
+pub use ispell_result::IspellResult;
+pub use ispell_result::IspellError;
 pub use spell_checker::SpellChecker;
 pub use spell_launcher::SpellLauncher;
 pub use error::Error;

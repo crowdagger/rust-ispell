@@ -4,9 +4,6 @@
 
 use std::process::Command;
 use std::process::Stdio;
-use std::io;
-use std::io::Read;
-use std::io::Write;
 
 use spell_checker::SpellChecker;
 use error::{Result, Error};
@@ -23,12 +20,25 @@ pub struct SpellLauncher {
 ///
 /// Runs `ispell` or one of its variant for you.
 ///
-/// # Example
+/// # Examples
+///
+/// * Launches `ispell` with `british` dictionary:
 ///
 /// ```
 /// use ispell::SpellLauncher;
 /// let checker = SpellLauncher::new()
-///               .aspell()
+///               .dictionary("british")
+///               .launch()
+///               .unwrap();
+/// ```
+///
+/// * Launches `aspell` with french (France) language:
+/// 
+/// ```
+/// use ispell::SpellLauncher;
+/// let checker = SpellLauncher::new()
+///               .aspell(true)
+///               .language("fr_FR")
 ///               .launch()
 ///               .unwrap();
 /// ```
@@ -43,6 +53,12 @@ impl SpellLauncher {
         }
     }
 
+    /// If true, sets compatibility mode to aspell instead of ispell.
+    pub fn aspell(&mut self, b: bool) -> &mut SpellLauncher {
+        self.aspell = b;
+        self
+    }
+    
     /// Set the name of the command to run
     ///
     /// By default, it is "ispell" or "aspell" if the `aspell` flag has been set.
@@ -61,7 +77,7 @@ impl SpellLauncher {
     ///               .dictionary("american")
     ///               .launch()
     ///               .unwrap();
-    /// ``
+    /// ```
     pub fn dictionary<S: Into<String>>(&mut self, dict: S) -> &mut SpellLauncher {
         self.dict = Some(dict.into());
         self
@@ -76,7 +92,7 @@ impl SpellLauncher {
     /// ```
     /// use ispell::SpellLauncher;
     /// let checker = SpellLauncher::new()
-    ///               .aspell()
+    ///               .aspell(true)
     ///               .language("en_GB")
     ///               .launch()
     ///               .unwrap();
@@ -103,7 +119,6 @@ impl SpellLauncher {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped());
         if self.aspell {
-            command.args(&["--encoding", "utf-8"]);
             if let Some(ref lang) = self.lang {
                 command.arg("-l")
                     .arg(lang);

@@ -3,7 +3,7 @@
 // this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-/// An ispell error when a word is not found
+/// An ispell error when a word is not found in a dictionary
 #[derive(Debug, PartialEq)]
 pub struct IspellError {
     /// The mispelled word
@@ -17,7 +17,7 @@ pub struct IspellError {
     pub suggestions: Vec<String>,
 }
 
-/// A result from ispell, corresponding to a word
+/// A result from ispell, corresponding to a line that is sent back for each word
 #[derive(Debug, PartialEq)]
 pub enum IspellResult {
     /// The word was found in the dictionnary.

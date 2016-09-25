@@ -20,6 +20,7 @@ pub struct SpellChecker {
 
 impl SpellChecker {
     /// Creates a new spell checker from a running process
+    #[doc(Hidden)]
     pub fn new(process: Child) -> Result<SpellChecker> {
         let mut checker = SpellChecker {
             ispell: process,
@@ -29,14 +30,12 @@ impl SpellChecker {
         // Read the first line that displays Version
         //        try!(checker.write_str(""));
 
-        let mut s = "".to_owned();
-        while s.is_empty() {
-            s = try!(checker.read_str());
-            println!("{}", s);
-        }
+        
+        
+        let s = try!(checker.read_str());
         match s.chars().next() {
             Some('@') => Ok(checker),
-            _ => Err(Error::protocol(format!("First line of ispell doesn't start with '@': {}", s)))
+            _ => Err(Error::protocol(format!("First line of ispell output doesn't start with '@', aborting")))
         }
     }
 
@@ -72,21 +71,45 @@ impl SpellChecker {
         Ok(())
     }
 
+    /// Checks the spelling of a string
+    ///
+    /// This method only returns the error that ispell detects.
+    pub fn check(&mut self, text: &str) -> Result<Vec<IspellError>> {
+        let results = try!(self.check_raw(text));
+        let mut errors = vec!();
+
+        for elem in results.into_iter() {
+            match elem {
+                IspellResult::Miss(error)
+                    | IspellResult::Guess(error)
+                    | IspellResult::None(error)
+                    => errors.push(error),
+
+                _ => (),
+            }
+        }
+        Ok(errors)
+    }
+
     
     /// Checks the spelling of a string
-    pub fn check(&mut self, text: &str) -> Result<Vec<IspellResult>> {
+    ///
+    /// This method returns a vector of all `ispell` answers, even when
+    /// there is no errors. Usually, the `check` method, which only returns
+    /// errors, will be more useful.
+    pub fn check_raw(&mut self, text: &str) -> Result<Vec<IspellResult>> {
         try!(self.write_str(text));
 
     
-        let words = text.split_whitespace().count();
+        let n_words = text.split_whitespace().count();
+        let mut output = Vec::with_capacity(n_words);
         let mut n_lines = 0;
-        let mut output = Vec::with_capacity(words);
+
         
-        while n_lines < words {
+        while n_lines < n_words {
             let s = try!(self.read_str());
-            print!("{}", s);
             for line in s.lines() {
-                if n_lines >= words {
+                if n_lines >= n_words {
                     break;
                 }
                 n_lines += 1;
@@ -150,7 +173,7 @@ fn get_ispell_error(input: &str, n: usize) -> Result<IspellError> {
     }
     let mispelled = words[1].to_owned();
     let position:usize = try!(words[n - 1].parse()
-                              .map_err(|c| Error::protocol(format!("could not parse '{}' as an int", words[2]))));
+                              .map_err(|_| Error::protocol(format!("could not parse '{}' as an int", words[2]))));
     Ok(IspellError {
         mispelled: mispelled,
         position: position,
