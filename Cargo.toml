@@ -1,6 +1,6 @@
 [package]
 name = "ispell"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Elisabeth Henry <liz.henry@ouvaton.org>"]
 description = "Easily run ispell or aspell from Rust"
 readme = "README.md"
