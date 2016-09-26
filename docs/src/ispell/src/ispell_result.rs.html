@@ -94,13 +94,15 @@
 <span id="50">50</span>
 <span id="51">51</span>
 <span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
 </pre><pre class='rust '>
 <span class='comment'>// This Source Code Form is subject to the terms of the Mozilla Public</span>
 <span class='comment'>// License, v. 2.0. If a copy of the MPL was not distributed with</span>
 <span class='comment'>// this file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
 
 
-<span class='doccomment'>/// An ispell error when a word is not found in a dictionary</span>
+<span class='doccomment'>/// An ispell error, corresponding to a word that isn&#39;t in the dictonary.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>IspellError</span> {
     <span class='doccomment'>/// The mispelled word</span>
@@ -114,7 +116,9 @@
     <span class='kw'>pub</span> <span class='ident'>suggestions</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
 }
 
-<span class='doccomment'>/// A result from ispell, corresponding to a line that is sent back for each word</span>
+<span class='doccomment'>/// A result from ispell, corresponding to a line that is sent back for each word.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// See the manpage `ispell(1)` for more informations about the meaning of each variant.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>IspellResult</span> {
     <span class='doccomment'>/// The word was found in the dictionnary.</span>

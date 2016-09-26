@@ -50,7 +50,7 @@
                </span><a id='src-11' class='srclink' href='../src/ispell/src/spell_checker.rs.html#26-28' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct SpellChecker { /* fields omitted */ }</pre><div class='docblock'><p>Spell Checker</p>
 
-<p>Checks the spelling of a list of words</p>
+<p>Checks the spelling of a line.</p>
 
 <h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
 <pre class='rust rust-example-rendered'>
@@ -58,18 +58,20 @@
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>checker</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>().<span class='ident'>launch</span>().<span class='ident'>unwrap</span>();
 <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;This should not contain any error&quot;</span>).<span class='ident'>unwrap</span>();
 <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>is_empty</span>());<a class='test-arrow' target='_blank' href=''>Run</a></pre>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-13' class='srclink' href='../src/ispell/src/spell_checker.rs.html#30-166' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-13' class='srclink' href='../src/ispell/src/spell_checker.rs.html#30-168' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.check' class='method'><span id='check.v' class='invisible'><code>fn <a href='#method.check' class='fnname'>check</a>(&amp;mut self, text: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Checks the spelling of a string</p>
+<div class='docblock'><p>Checks the spelling of a line.</p>
 
-<p>This method only returns the error that ispell detects.</p>
+<p>This method only returns the errors that ispell detects. Since the position returned
+in those errors is the number of characters since the beginning of the line, this method
+needs to be called line by line and not on a full document.</p>
 </div><h4 id='method.check_raw' class='method'><span id='check_raw.v' class='invisible'><code>fn <a href='#method.check_raw' class='fnname'>check_raw</a>(&amp;mut self, text: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Checks the spelling of a string</p>
 
 <p>This method returns a vector of all <code>ispell</code> answers, even when
 there is no errors. Usually, the <code>check</code> method, which only returns
 errors, will be more useful.</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-83' class='srclink' href='../src/ispell/src/spell_checker.rs.html#169-174' title='goto source code'>[src]</a></span></h3>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-83' class='srclink' href='../src/ispell/src/spell_checker.rs.html#171-176' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.drop' class='method'><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
 <div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop">Read more</a></p>
 </div></div></section>

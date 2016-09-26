@@ -177,9 +177,6 @@
 <span id="133">133</span>
 <span id="134">134</span>
 <span id="135">135</span>
-<span id="136">136</span>
-<span id="137">137</span>
-<span id="138">138</span>
 </pre><pre class='rust '>
 <span class='comment'>// This Source Code Form is subject to the terms of the Mozilla Public</span>
 <span class='comment'>// License, v. 2.0. If a copy of the MPL was not distributed with</span>
@@ -191,9 +188,9 @@
 <span class='kw'>use</span> <span class='ident'>spell_checker</span>::<span class='ident'>SpellChecker</span>;
 <span class='kw'>use</span> <span class='ident'>error</span>::{<span class='prelude-ty'>Result</span>, <span class='ident'>Error</span>};
 
-<span class='doccomment'>/// Spell Launcher wizard (ah, ah).</span>
+<span class='doccomment'>/// Spell Launcher wizard (ah, ah). A builder for `SpellChecker`.</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// Runs `ispell` or one of its variant for you.</span>
+<span class='doccomment'>/// Runs `ispell` or one of its variant.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// # Examples</span>
 <span class='doccomment'>///</span>
@@ -212,17 +209,23 @@
 <span class='doccomment'>/// ```</span>
 <span class='doccomment'>/// use ispell::SpellLauncher;</span>
 <span class='doccomment'>/// let checker = SpellLauncher::new()</span>
-<span class='doccomment'>///               .aspell(true)</span>
-<span class='doccomment'>///               .language(&quot;fr_FR&quot;)</span>
+<span class='doccomment'>///               .aspell()</span>
+<span class='doccomment'>///               .dictionary(&quot;fr_FR&quot;)</span>
 <span class='doccomment'>///               .launch()</span>
 <span class='doccomment'>///               .unwrap();</span>
 <span class='doccomment'>/// ```</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>SpellLauncher</span> {
     <span class='ident'>lang</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='ident'>dict</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
     <span class='ident'>command</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='ident'>aspell</span>: <span class='ident'>bool</span>,
+    <span class='ident'>mode</span>: <span class='ident'>Mode</span>,
+}
+
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
+<span class='kw'>enum</span> <span class='ident'>Mode</span> {
+    <span class='ident'>Ispell</span>,
+    <span class='ident'>Aspell</span>,
+    <span class='ident'>Hunspell</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>SpellLauncher</span> {
@@ -231,69 +234,66 @@
         <span class='ident'>SpellLauncher</span> {
             <span class='ident'>lang</span>: <span class='prelude-val'>None</span>,
             <span class='ident'>command</span>: <span class='prelude-val'>None</span>,
-            <span class='ident'>dict</span>: <span class='prelude-val'>None</span>,
-            <span class='ident'>aspell</span>: <span class='bool-val'>false</span>,
+            <span class='ident'>mode</span>: <span class='ident'>Mode</span>::<span class='ident'>Ispell</span>,
         }
     }
 
-    <span class='doccomment'>/// If true, sets compatibility mode to aspell instead of ispell.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>aspell</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>b</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>SpellLauncher</span> {
-        <span class='self'>self</span>.<span class='ident'>aspell</span> <span class='op'>=</span> <span class='ident'>b</span>;
+    <span class='doccomment'>/// Sets mode to aspell instead of ispell.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Will run `aspell` as the command if it is not set</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>aspell</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>SpellLauncher</span> {
+        <span class='self'>self</span>.<span class='ident'>mode</span> <span class='op'>=</span> <span class='ident'>Mode</span>::<span class='ident'>Aspell</span>;
+        <span class='self'>self</span>
+    }
+
+    <span class='doccomment'>/// Sets compatibility mode to hunspell instead of ispell.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Will run `hunspell` as the command if it is not set</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>hunspell</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>SpellLauncher</span> {
+        <span class='self'>self</span>.<span class='ident'>mode</span> <span class='op'>=</span> <span class='ident'>Mode</span>::<span class='ident'>Hunspell</span>;
         <span class='self'>self</span>
     }
     
     <span class='doccomment'>/// Set the name of the command to run</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// By default, it is &quot;ispell&quot;, or &quot;aspell&quot; if the `aspell` flag has been set.</span>
+    <span class='doccomment'>/// By default, it inferred from the mode (which is `ispell` by default).</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>command</span><span class='op'>&lt;</span><span class='ident'>S</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>command</span>: <span class='ident'>S</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>SpellLauncher</span> {
         <span class='self'>self</span>.<span class='ident'>command</span> <span class='op'>=</span> <span class='prelude-val'>Some</span>(<span class='ident'>command</span>.<span class='ident'>into</span>());
         <span class='self'>self</span>
     }
 
-    <span class='doccomment'>/// Set the dictionary that should be used</span>
-    <span class='doccomment'>/// </span>
-    <span class='doccomment'>/// # Example</span>
+    <span class='doccomment'>/// Determine the dictionary that should be used.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use ispell::SpellLauncher;</span>
-    <span class='doccomment'>/// let checker = SpellLauncher::new()</span>
-    <span class='doccomment'>///               .dictionary(&quot;american&quot;)</span>
-    <span class='doccomment'>///               .launch()</span>
-    <span class='doccomment'>///               .unwrap();</span>
-    <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>dictionary</span><span class='op'>&lt;</span><span class='ident'>S</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>dict</span>: <span class='ident'>S</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>SpellLauncher</span> {
-        <span class='self'>self</span>.<span class='ident'>dict</span> <span class='op'>=</span> <span class='prelude-val'>Some</span>(<span class='ident'>dict</span>.<span class='ident'>into</span>());
-        <span class='self'>self</span>
-    }
-    
-    <span class='doccomment'>/// Set the language option for aspell.</span>
+    <span class='doccomment'>/// Note that `ispell`, `hunspell` and `aspell` have different naming schemes:</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Used only if the `aspell` flag has been set, else use `dictionary`. (Avoid mixing the two.)</span>
+    <span class='doccomment'>/// * `ispell` accepts full names, e.g. &quot;american&quot;, &quot;british&quot;, &quot;french&quot;, ...</span>
+    <span class='doccomment'>/// * `hunspell` accepts unicode language codes, e.g. &quot;fr_FR&quot;, &quot;en_GB&quot;, ...</span>
+    <span class='doccomment'>/// * `aspell` accepts both.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Example</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use ispell::SpellLauncher;</span>
     <span class='doccomment'>/// let checker = SpellLauncher::new()</span>
-    <span class='doccomment'>///               .aspell(true)</span>
-    <span class='doccomment'>///               .language(&quot;en_GB&quot;)</span>
+    <span class='doccomment'>///               .aspell()</span>
+    <span class='doccomment'>///               .dictionary(&quot;en_GB&quot;)</span>
     <span class='doccomment'>///               .launch()</span>
     <span class='doccomment'>///               .unwrap();</span>
     <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>language</span><span class='op'>&lt;</span><span class='ident'>S</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>lang</span>: <span class='ident'>S</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>SpellLauncher</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>dictionary</span><span class='op'>&lt;</span><span class='ident'>S</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>lang</span>: <span class='ident'>S</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>SpellLauncher</span> {
         <span class='self'>self</span>.<span class='ident'>lang</span> <span class='op'>=</span> <span class='prelude-val'>Some</span>(<span class='ident'>lang</span>.<span class='ident'>into</span>());
         <span class='self'>self</span>
     }
 
-    <span class='doccomment'>/// Launch `ispell` (or `aspell`) and return a `SpellChecker`</span>
+    <span class='doccomment'>/// Launch `ispell` (or `aspell` or `hunspell`) and return a `SpellChecker`</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>launch</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>SpellChecker</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>command_name</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='kw-2'>ref</span> <span class='ident'>command</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>command</span> {
             <span class='ident'>command</span>
         } <span class='kw'>else</span> {
-            <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>aspell</span> {
-                <span class='string'>&quot;aspell&quot;</span>
-            } <span class='kw'>else</span> {
-                <span class='string'>&quot;ispell&quot;</span>
+            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>mode</span> {
+                <span class='ident'>Mode</span>::<span class='ident'>Ispell</span> <span class='op'>=&gt;</span> <span class='string'>&quot;ispell&quot;</span>,
+                <span class='ident'>Mode</span>::<span class='ident'>Aspell</span> <span class='op'>=&gt;</span> <span class='string'>&quot;aspell&quot;</span>,
+                <span class='ident'>Mode</span>::<span class='ident'>Hunspell</span> <span class='op'>=&gt;</span> <span class='string'>&quot;hunspell&quot;</span>,
             }
         };
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>command</span> <span class='op'>=</span> <span class='ident'>Command</span>::<span class='ident'>new</span>(<span class='ident'>command_name</span>);
@@ -301,15 +301,9 @@
             .<span class='ident'>arg</span>(<span class='string'>&quot;-a&quot;</span>)
             .<span class='ident'>stdin</span>(<span class='ident'>Stdio</span>::<span class='ident'>piped</span>())
             .<span class='ident'>stdout</span>(<span class='ident'>Stdio</span>::<span class='ident'>piped</span>());
-        <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>aspell</span> {
-            <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='kw-2'>ref</span> <span class='ident'>lang</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>lang</span> {
-                <span class='ident'>command</span>.<span class='ident'>arg</span>(<span class='string'>&quot;-l&quot;</span>)
-                    .<span class='ident'>arg</span>(<span class='ident'>lang</span>);
-            }
-        }
-        <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='kw-2'>ref</span> <span class='ident'>dict</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>dict</span> {
+        <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='kw-2'>ref</span> <span class='ident'>lang</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>lang</span> {
             <span class='ident'>command</span>.<span class='ident'>arg</span>(<span class='string'>&quot;-d&quot;</span>)
-                .<span class='ident'>arg</span>(<span class='ident'>dict</span>);
+                .<span class='ident'>arg</span>(<span class='ident'>lang</span>);
         }
         <span class='kw'>let</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='ident'>command</span>.<span class='ident'>spawn</span>();
 
