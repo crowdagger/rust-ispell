@@ -21,7 +21,8 @@ fn display(errors: &[IspellError]) {
 
 fn main() {
     let checker = SpellLauncher::new()
-        .aspell(true)
+        .dictionary("en_GB")
+        .command("hunspell")
         .launch();
     match checker {
         Ok(mut checker) => {

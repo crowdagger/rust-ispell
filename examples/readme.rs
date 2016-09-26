@@ -3,8 +3,8 @@ use ispell::SpellLauncher;
 
 fn main() {
     let mut checker = SpellLauncher::new()
-        .aspell(true)
-        .language("en_GB")
+        .aspell()
+        .dictionary("en_GB")
         .launch()
         .unwrap();
     let errors = checker.check("A simpel test to see if it detetcs typing errors").unwrap();

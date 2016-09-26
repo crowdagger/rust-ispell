@@ -3,7 +3,7 @@
 // this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-/// An ispell error when a word is not found in a dictionary
+/// An ispell error when, a word is not found in a dictionary
 #[derive(Debug, PartialEq)]
 pub struct IspellError {
     /// The mispelled word

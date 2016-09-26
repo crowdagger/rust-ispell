@@ -10,7 +10,7 @@
 //! ```
 //! # use ispell::SpellLauncher;
 //! let mut checker = SpellLauncher::new()
-//!                  .aspell(true)
+//!                  .aspell()
 //!                  .launch()
 //!                  .unwrap();
 //! let errors = checker.check("Testing iff if it works").unwrap();

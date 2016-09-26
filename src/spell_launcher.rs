@@ -29,17 +29,23 @@ use error::{Result, Error};
 /// ```
 /// use ispell::SpellLauncher;
 /// let checker = SpellLauncher::new()
-///               .aspell(true)
-///               .language("fr_FR")
+///               .aspell()
+///               .dictionary("fr_FR")
 ///               .launch()
 ///               .unwrap();
 /// ```
 #[derive(Debug)]
 pub struct SpellLauncher {
     lang: Option<String>,
-    dict: Option<String>,
     command: Option<String>,
-    aspell: bool,
+    mode: Mode,
+}
+
+#[derive(Debug)]
+enum Mode {
+    Ispell,
+    Aspell,
+    Hunspell,
 }
 
 impl SpellLauncher {
@@ -48,69 +54,66 @@ impl SpellLauncher {
         SpellLauncher {
             lang: None,
             command: None,
-            dict: None,
-            aspell: false,
+            mode: Mode::Ispell,
         }
     }
 
-    /// If true, sets compatibility mode to aspell instead of ispell.
-    pub fn aspell(&mut self, b: bool) -> &mut SpellLauncher {
-        self.aspell = b;
+    /// Sets mode to aspell instead of ispell.
+    ///
+    /// Will run `aspell` as the command if it is not set
+    pub fn aspell(&mut self) -> &mut SpellLauncher {
+        self.mode = Mode::Aspell;
+        self
+    }
+
+    /// Sets compatibility mode to hunspell instead of ispell.
+    ///
+    /// Will run `hunspell` as the command if it is not set
+    pub fn hunspell(&mut self) -> &mut SpellLauncher {
+        self.mode = Mode::Hunspell;
         self
     }
     
     /// Set the name of the command to run
     ///
-    /// By default, it is "ispell", or "aspell" if the `aspell` flag has been set.
+    /// By default, it inferred from the mode (which is `ispell` by default).
     pub fn command<S: Into<String>>(&mut self, command: S) -> &mut SpellLauncher {
         self.command = Some(command.into());
         self
     }
 
-    /// Set the dictionary that should be used
-    /// 
-    /// # Example
+    /// Determine the dictionary that should be used.
     ///
-    /// ```
-    /// use ispell::SpellLauncher;
-    /// let checker = SpellLauncher::new()
-    ///               .dictionary("american")
-    ///               .launch()
-    ///               .unwrap();
-    /// ```
-    pub fn dictionary<S: Into<String>>(&mut self, dict: S) -> &mut SpellLauncher {
-        self.dict = Some(dict.into());
-        self
-    }
-    
-    /// Set the language option for aspell.
+    /// Note that `ispell`, `hunspell` and `aspell` have different naming schemes:
     ///
-    /// Used only if the `aspell` flag has been set, else use `dictionary`. (Avoid mixing the two.)
+    /// * `ispell` accepts full names, e.g. "american", "british", "french", ...
+    /// * `hunspell` accepts unicode language codes, e.g. "fr_FR", "en_GB", ...
+    /// * `aspell` accepts both.
     ///
     /// # Example
     ///
     /// ```
     /// use ispell::SpellLauncher;
     /// let checker = SpellLauncher::new()
-    ///               .aspell(true)
-    ///               .language("en_GB")
+    ///               .aspell()
+    ///               .dictionary("en_GB")
     ///               .launch()
     ///               .unwrap();
     /// ```
-    pub fn language<S: Into<String>>(&mut self, lang: S) -> &mut SpellLauncher {
+    pub fn dictionary<S: Into<String>>(&mut self, lang: S) -> &mut SpellLauncher {
         self.lang = Some(lang.into());
         self
     }
 
-    /// Launch `ispell` (or `aspell`) and return a `SpellChecker`
+    /// Launch `ispell` (or `aspell` or `hunspell`) and return a `SpellChecker`
     pub fn launch(&self) -> Result<SpellChecker> {
         let command_name: &str = if let Some(ref command) = self.command {
             command
         } else {
-            if self.aspell {
-                "aspell"
-            } else {
-                "ispell"
+            match self.mode {
+                Mode::Ispell => "ispell",
+                Mode::Aspell => "aspell",
+                Mode::Hunspell => "hunspell",
             }
         };
         let mut command = Command::new(command_name);
@@ -118,15 +121,9 @@ impl SpellLauncher {
             .arg("-a")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped());
-        if self.aspell {
-            if let Some(ref lang) = self.lang {
-                command.arg("-l")
-                    .arg(lang);
-            }
-        }
-        if let Some(ref dict) = self.dict {
+        if let Some(ref lang) = self.lang {
             command.arg("-d")
-                .arg(dict);
+                .arg(lang);
         }
         let res = command.spawn();
 
