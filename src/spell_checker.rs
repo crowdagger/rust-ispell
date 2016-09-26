@@ -13,7 +13,7 @@ const BUF_LEN: usize = 42;
 
 /// Spell Checker
 ///
-/// Checks the spelling of a list of words
+/// Checks the spelling of a line.
 ///
 /// # Example
 ///
@@ -80,9 +80,11 @@ impl SpellChecker {
         Ok(())
     }
 
-    /// Checks the spelling of a string
+    /// Checks the spelling of a line.
     ///
-    /// This method only returns the error that ispell detects.
+    /// This method only returns the errors that ispell detects. Since the position returned
+    /// in those errors is the number of characters since the beginning of the line, this method
+    /// needs to be called line by line and not on a full document.
     pub fn check(&mut self, text: &str) -> Result<Vec<IspellError>> {
         let results = try!(self.check_raw(text));
         let mut errors = vec!();

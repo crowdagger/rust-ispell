@@ -8,9 +8,9 @@ use std::process::Stdio;
 use spell_checker::SpellChecker;
 use error::{Result, Error};
 
-/// Spell Launcher wizard (ah, ah).
+/// Spell Launcher wizard (ah, ah). A builder for `SpellChecker`.
 ///
-/// Runs `ispell` or one of its variant for you.
+/// Runs `ispell` or one of its variant.
 ///
 /// # Examples
 ///
