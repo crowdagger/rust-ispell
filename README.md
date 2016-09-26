@@ -47,9 +47,20 @@ Maybe you meant 'dietetics'?
 
 (*Yes*, that is exactly what I meant.)
 
-For more information about using this library, see the [API documentation](https://lise-henry.github.io/rust-ispell/ispell/).
+Documentation
+-------------
+
+For more information about using this library, see the
+[API documentation on Github.io](https://lise-henry.github.io/rust-ispell/ispell/)
+or on [docs.rs](https://docs.rs/releases/search?query=ispell).
+
+ChangeLog
+---------
+
+See [ChangeLog.md](ChangeLog.md).
 
 License 
 -------
 
-`rust-ispell` is published under the [Mozilla Public License, version 2.0](https://www.mozilla.org/en-US/MPL/2.0/).
+`rust-ispell` is free software, published under the
+[Mozilla Public License, version 2.0](https://www.mozilla.org/en-US/MPL/2.0/). 
