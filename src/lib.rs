@@ -41,6 +41,9 @@
 //! # The `SpellChecker`
 //!
 //! If the command has been launched successfully, it will return a `SpellChecker`.
+//!
+//! ## Checking words
+//!
 //! The main usage of this struct is to get the errors
 //! (`IspellError`) the spell checker detects with
 //! `SpellChecker::check`. The `ispell` API returns the position (in 
@@ -70,7 +73,26 @@
 //! `SpellChecker` also provides the `check_raw` method, whose behaviour mimics more closely
 //! ispell's output.
 //!
-//! # Languages and encodings
+//! ## Adding words
+//!
+//! There are two methods to add words so they are no more detected as errors:
+//!
+//! * `add_word` adds a word to this current session, but doesn't save it;
+//! * `add_word_to_dictionary` adds a word to your personal dictionary, saving it for
+//!    next sessions.
+//!
+//! ```
+//! # use ispell::SpellLauncher;
+//! let mut checker = SpellLauncher::new()
+//!                   .launch()
+//!                   .unwrap();
+//! checker.add_word("foobar"); // Add a word only to this session
+//! checker.add_word_to_dictionary("rustacean"); // Add a word and saves it
+//! let errors = checker.check("foobar rustacean").unwrap();
+//! assert!(errors.is_empty());
+//! ```
+//!
+//! # Languages
 //!
 //! `ispell`, `aspell` and `hunspell` all allow you to specify which dictionary must be used,
 //! but they don't necessarily use the same naming scheme. `ispell` uses full names:
@@ -94,16 +116,12 @@
 //!
 //! whereas `aspell` accepts both versions.
 //!
-//! Currently, no encoding is specified when runnig i/a/hun/spell, so, depending on the system
-//! you are using and the command you use, it is possible you'll encounter problems if you use non-ASCII characters.
+//! # Character encoding
 //!
-//! # Warning
-//!
-//!  This library hasn't been tested a lot yet. It tries to avoid
-//! `panic!`s but, unfortunately, since `Read`s are blocking, there is
-//! a risk that it will simply hang up infinitely (particularly if you use
-//! `SpellLauncher::command(...)` to launch a process that doesn't comply with
-//! the ispell API).
+//! This library tries to set encoding to `utf-8`, but ispell, hunspell and aspell takes different arguments
+//! for that. This is why you should use the `ispell`, `aspell` and `hunspell` methods intead of setting the
+//! command to invoke with the `command` method.
+
 
 mod spell_checker;
 mod spell_launcher;
