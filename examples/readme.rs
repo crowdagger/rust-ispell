@@ -4,7 +4,7 @@ use ispell::SpellLauncher;
 fn main() {
     let mut checker = SpellLauncher::new()
         .aspell()
-        .command("caribon")
+        .command("aspell")
         .dictionary("en")
         .launch()
         .unwrap();

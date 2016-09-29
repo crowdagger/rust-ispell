@@ -6,7 +6,7 @@ use std::process::ChildStdout;
 use std::io::Read;
 use std::sync::mpsc::Sender;
 
-use error::{Result, Error};
+use error::Result;
 
 const BUF_LEN: usize = 42;
 

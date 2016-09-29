@@ -2,8 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with
 // this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use std::process::{Child, ChildStdin, ChildStdout};
-use std::io::Read;
+use std::process::{Child, ChildStdin};
 use std::io::Write;
 use std::time::Duration;
 use std::thread;
@@ -12,8 +11,6 @@ use std::sync::mpsc::{channel,Receiver};
 use error::{Result, Error};
 use ispell_result::{IspellResult, IspellError};
 use async_reader::AsyncReader;
-
-const BUF_LEN: usize = 42;
 
 /// Spell Checker
 ///
@@ -32,7 +29,7 @@ pub struct SpellChecker {
     stdin: ChildStdin,
     receiver: Receiver<Result<String>>,
     timeout: Duration,
-    child: thread::JoinHandle<()>,
+    _child: thread::JoinHandle<()>,
 }
 
 impl SpellChecker {
@@ -62,7 +59,7 @@ impl SpellChecker {
             stdin: stdin,
             timeout: Duration::from_millis(timeout),
             receiver: receiver,
-            child: child,
+            _child: child,
         };
 
         // Read the first line that displays Version
@@ -78,7 +75,7 @@ impl SpellChecker {
     fn read_str(&mut self) -> Result<String> {
         match self.receiver.recv_timeout(self.timeout) {
             Ok(result) => result,
-            Err(err) => panic!("!!!"),
+            Err(_) => Err(Error::process("timeout error: spawned process didn't respond in time, aborting")),
         }
     }
 
