@@ -5,9 +5,13 @@
 use std::process::{Child, ChildStdin, ChildStdout};
 use std::io::Read;
 use std::io::Write;
+use std::time::Duration;
+use std::thread;
+use std::sync::mpsc::{channel,Receiver};
 
 use error::{Result, Error};
 use ispell_result::{IspellResult, IspellError};
+use async_reader::AsyncReader;
 
 const BUF_LEN: usize = 42;
 
@@ -26,13 +30,15 @@ const BUF_LEN: usize = 42;
 pub struct SpellChecker {
     ispell: Child,
     stdin: ChildStdin,
-    stdout: ChildStdout,
+    receiver: Receiver<Result<String>>,
+    timeout: Duration,
+    child: thread::JoinHandle<()>,
 }
 
 impl SpellChecker {
     /// Creates a new spell checker from a running process
     #[doc(hidden)]
-    pub fn new(mut process: Child) -> Result<SpellChecker> {
+    pub fn new(mut process: Child, timeout: u64) -> Result<SpellChecker> {
         let stdin = if let Some(stdin) = process.stdin.take() {
             stdin
         } else {
@@ -45,11 +51,18 @@ impl SpellChecker {
             return Err(Error::process("could not access stdin of spawned process"));
         };
 
+        let (sender, receiver) = channel();
+        let mut reader = AsyncReader::new(stdout, sender);
+        let child = thread::spawn(move || {
+            reader.read_loop();
+        });
         
         let mut checker = SpellChecker {
             ispell: process,
             stdin: stdin,
-            stdout: stdout,
+            timeout: Duration::from_millis(timeout),
+            receiver: receiver,
+            child: child,
         };
 
         // Read the first line that displays Version
@@ -63,18 +76,10 @@ impl SpellChecker {
 
     /// Reads the output from ispell
     fn read_str(&mut self) -> Result<String> {
-        let mut buffer = [0; BUF_LEN];
-        let mut output = vec!();
-        loop {
-            let n = try!(self.stdout.read(&mut buffer));
-                output.extend_from_slice(&buffer[0..n]);
-                if n < BUF_LEN {
-                    break;
-                } else {
-                    continue;
-                }
-            }
-        Ok(try!(String::from_utf8(output)))
+        match self.receiver.recv_timeout(self.timeout) {
+            Ok(result) => result,
+            Err(err) => panic!("!!!"),
+        }
     }
 
     /// Write to ispell stdinn
@@ -196,3 +201,5 @@ fn get_ispell_error(input: &str, n: usize) -> Result<IspellError> {
         suggestions: vec!(),
         })
 }
+
+

@@ -39,6 +39,7 @@ pub struct SpellLauncher {
     lang: Option<String>,
     command: Option<String>,
     mode: Mode,
+    timeout: u64,
 }
 
 #[derive(Debug)]
@@ -55,6 +56,7 @@ impl SpellLauncher {
             lang: None,
             command: None,
             mode: Mode::Ispell,
+            timeout: 100,
         }
     }
 
@@ -63,6 +65,18 @@ impl SpellLauncher {
     /// Will run `aspell` as the command if it is not set
     pub fn aspell(&mut self) -> &mut SpellLauncher {
         self.mode = Mode::Aspell;
+        self
+    }
+
+    /// Sets the timeout when checking ispell
+    ///
+    /// If the spawned process takes longer than this timeout to answer to a query,
+    /// it will be killed and an error will be returned, preventing your program
+    /// from freezing indefinitely.
+    ///
+    /// The timeout is set in milliseconds, and is 100 by default.
+    pub fn timeout(&mut self, timeout: u64) -> &mut SpellLauncher {
+        self.timeout = timeout;
         self
     }
 
@@ -128,7 +142,7 @@ impl SpellLauncher {
         let res = command.spawn();
 
         match res {
-            Ok(child) => SpellChecker::new(child),
+            Ok(child) => SpellChecker::new(child, self.timeout),
             Err(err) => Err(Error::process(format!("could not successfully spawn process '{}': {}", command_name, err)))
         }
     }

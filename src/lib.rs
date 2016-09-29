@@ -109,6 +109,7 @@ mod spell_checker;
 mod spell_launcher;
 mod error;
 mod ispell_result;
+mod async_reader;
 
 pub use ispell_result::IspellResult;
 pub use ispell_result::IspellError;
