@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with
 // this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use std::process::Child;
+use std::process::{Child, ChildStdin, ChildStdout};
 use std::io::Read;
 use std::io::Write;
 
@@ -25,22 +25,35 @@ const BUF_LEN: usize = 42;
 /// ```
 pub struct SpellChecker {
     ispell: Child,
+    stdin: ChildStdin,
+    stdout: ChildStdout,
 }
 
 impl SpellChecker {
     /// Creates a new spell checker from a running process
     #[doc(hidden)]
-    pub fn new(process: Child) -> Result<SpellChecker> {
-        let mut checker = SpellChecker {
-            ispell: process,
+    pub fn new(mut process: Child) -> Result<SpellChecker> {
+        let stdin = if let Some(stdin) = process.stdin.take() {
+            stdin
+        } else {
+            return Err(Error::process("could not access stdin of spawned process"));
         };
 
-        // Skip the introduction
-        // Read the first line that displays Version
-        //        try!(checker.write_str(""));
+        let stdout = if let Some(stdout) = process.stdout.take() {
+            stdout
+        } else {
+            return Err(Error::process("could not access stdin of spawned process"));
+        };
 
         
-        
+        let mut checker = SpellChecker {
+            ispell: process,
+            stdin: stdin,
+            stdout: stdout,
+        };
+
+        // Read the first line that displays Version
+        //        try!(checker.write_str(""));
         let s = try!(checker.read_str());
         match s.chars().next() {
             Some('@') => Ok(checker),
@@ -50,11 +63,10 @@ impl SpellChecker {
 
     /// Reads the output from ispell
     fn read_str(&mut self) -> Result<String> {
-        if let Some(ref mut stdout) = self.ispell.stdout {
-            let mut buffer = [0; BUF_LEN];
-            let mut output = vec!();
-            loop {
-                let n = try!(stdout.read(&mut buffer));
+        let mut buffer = [0; BUF_LEN];
+        let mut output = vec!();
+        loop {
+            let n = try!(self.stdout.read(&mut buffer));
                 output.extend_from_slice(&buffer[0..n]);
                 if n < BUF_LEN {
                     break;
@@ -62,21 +74,14 @@ impl SpellChecker {
                     continue;
                 }
             }
-            Ok(try!(String::from_utf8(output)))
-        } else {
-            Err(Error::process("process should have been opened with a stdout pipe"))
-        }
+        Ok(try!(String::from_utf8(output)))
     }
 
     /// Write to ispell stdinn
     fn write_str(&mut self, text: &str) -> Result<()> {
-        if let Some(ref mut stdin) = self.ispell.stdin {
-            try!(stdin.write_all(text.as_bytes()));
-            try!(stdin.write_all("\n".as_bytes()));
-            try!(stdin.flush());
-        } else {
-            return Err(Error::process("ispell's stdin and stdout were not properly piped"));
-        }
+        try!(self.stdin.write_all(text.as_bytes()));
+        try!(self.stdin.write_all("\n".as_bytes()));
+        try!(self.stdin.flush());
         Ok(())
     }
 
