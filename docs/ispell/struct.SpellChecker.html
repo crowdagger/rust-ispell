@@ -47,8 +47,10 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-11' class='srclink' href='../src/ispell/src/spell_checker.rs.html#26-28' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct SpellChecker { /* fields omitted */ }</pre><div class='docblock'><p>Spell Checker</p>
+               </span><a id='src-13' class='srclink' href='../src/ispell/src/spell_checker.rs.html#27-33' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct SpellChecker {
+    // some fields omitted
+}</pre><div class='docblock'><p>Spell Checker</p>
 
 <p>Checks the spelling of a line.</p>
 
@@ -57,22 +59,82 @@
 <span class='kw'>use</span> <span class='ident'>ispell</span>::<span class='ident'>SpellLauncher</span>;
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>checker</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>().<span class='ident'>launch</span>().<span class='ident'>unwrap</span>();
 <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;This should not contain any error&quot;</span>).<span class='ident'>unwrap</span>();
-<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>is_empty</span>());<a class='test-arrow' target='_blank' href=''>Run</a></pre>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-13' class='srclink' href='../src/ispell/src/spell_checker.rs.html#30-168' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.check' class='method'><span id='check.v' class='invisible'><code>fn <a href='#method.check' class='fnname'>check</a>(&amp;mut self, text: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>&gt;&gt;</code></span></h4>
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>is_empty</span>());</pre>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-19' class='srclink' href='../src/ispell/src/spell_checker.rs.html#35-286' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.add_word_to_dictionary' class='method'><code>fn <a href='#method.add_word_to_dictionary' class='fnname'>add_word_to_dictionary</a>(&amp;mut self, word: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></h4>
+<div class='docblock'><p>Adds a word to your personal dictionary</p>
+
+<p>The word will be saved to your words file (e.g. <code>~/.ispell_LANG,</code> <code>~/.hunspell_LANG, or</code>~/.aspell.LANG.pws<code>), so it will be memorized next time you use i/a/hun/spell. If you only want to add the word to this current session, use</code>add_word`.</p>
+
+<h1 id='returns' class='section-header'><a href='#returns'>Returns</a></h1>
+<p>An error if <code>word</code> contains spaces or illegal characters</p>
+
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<p>Adding a valid word</p>
+
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>ispell</span>::<span class='ident'>SpellLauncher</span>;
+
+<span class='kw'>fn</span> <span class='ident'>main</span>() {
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>checker</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
+        .<span class='ident'>launch</span>()
+        .<span class='ident'>unwrap</span>();
+    
+    <span class='comment'>// &quot;rustacean&quot; is not a valid word...</span>
+    <span class='comment'>// (unless you already ran this code example)</span>
+    <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;rustacean&quot;</span>).<span class='ident'>unwrap</span>();
+    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>len</span>(), <span class='number'>1</span>);
+
+    <span class='comment'>// let&#39;s add it to our personal dictionary</span>
+    <span class='ident'>checker</span>.<span class='ident'>add_word_to_dictionary</span>(<span class='string'>&quot;rustacean&quot;</span>).<span class='ident'>unwrap</span>();
+
+    <span class='comment'>// now it is a valid word</span>
+    <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;rustacean&quot;</span>).<span class='ident'>unwrap</span>();
+    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>is_empty</span>());
+}</pre>
+</div><h4 id='method.add_word' class='method'><code>fn <a href='#method.add_word' class='fnname'>add_word</a>(&amp;mut self, word: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></h4>
+<div class='docblock'><p>Add a word to current session.</p>
+
+<p>This word won&#39;t be memorized the next time you use i/a/hun/spell. If you want this behaviour,
+use <code>add_word_to_dictionary</code>.</p>
+
+<h1 id='returns-1' class='section-header'><a href='#returns-1'>Returns</a></h1>
+<p>An error if <code>word</code> contains spaces or illegal characters</p>
+
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>ispell</span>::<span class='ident'>SpellLauncher</span>;
+
+<span class='kw'>fn</span> <span class='ident'>main</span>() {
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>checker</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
+        .<span class='ident'>launch</span>()
+        .<span class='ident'>unwrap</span>();
+    
+    <span class='comment'>// &quot;rustaholic&quot; is not a valid word...</span>
+    <span class='comment'>// (even if you already ran this code example)</span>
+    <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;rustaholic&quot;</span>).<span class='ident'>unwrap</span>();
+    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>len</span>(), <span class='number'>1</span>);
+
+    <span class='comment'>// let&#39;s add it to this session</span>
+    <span class='ident'>checker</span>.<span class='ident'>add_word</span>(<span class='string'>&quot;rustaholic&quot;</span>).<span class='ident'>unwrap</span>();
+
+    <span class='comment'>// now it is a valid word</span>
+    <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;rustaholic&quot;</span>).<span class='ident'>unwrap</span>();
+    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>is_empty</span>());
+}</pre>
+</div><h4 id='method.check' class='method'><code>fn <a href='#method.check' class='fnname'>check</a>(&amp;mut self, text: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>&gt;&gt;</code></h4>
 <div class='docblock'><p>Checks the spelling of a line.</p>
 
 <p>This method only returns the errors that ispell detects. Since the position returned
 in those errors is the number of characters since the beginning of the line, this method
 needs to be called line by line and not on a full document.</p>
-</div><h4 id='method.check_raw' class='method'><span id='check_raw.v' class='invisible'><code>fn <a href='#method.check_raw' class='fnname'>check_raw</a>(&amp;mut self, text: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a>&gt;&gt;</code></span></h4>
+</div><h4 id='method.check_raw' class='method'><code>fn <a href='#method.check_raw' class='fnname'>check_raw</a>(&amp;mut self, text: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a>&gt;&gt;</code></h4>
 <div class='docblock'><p>Checks the spelling of a string</p>
 
 <p>This method returns a vector of all <code>ispell</code> answers, even when
 there is no errors. Usually, the <code>check</code> method, which only returns
 errors, will be more useful.</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-83' class='srclink' href='../src/ispell/src/spell_checker.rs.html#171-176' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.drop' class='method'><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-130' class='srclink' href='../src/ispell/src/spell_checker.rs.html#289-294' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
 <div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop">Read more</a></p>
 </div></div></section>
     <section id='search' class="content hidden"></section>

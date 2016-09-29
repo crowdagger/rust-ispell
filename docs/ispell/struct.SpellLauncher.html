@@ -47,8 +47,10 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-104' class='srclink' href='../src/ispell/src/spell_launcher.rs.html#38-42' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct SpellLauncher { /* fields omitted */ }</pre><div class='docblock'><p>Spell Launcher wizard (ah, ah). A builder for <code>SpellChecker</code>.</p>
+               </span><a id='src-160' class='srclink' href='../src/ispell/src/spell_launcher.rs.html#38-43' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct SpellLauncher {
+    // some fields omitted
+}</pre><div class='docblock'><p>Spell Launcher wizard (ah, ah). A builder for <code>SpellChecker</code>.</p>
 
 <p>Runs <code>ispell</code> or one of its variant.</p>
 
@@ -62,7 +64,7 @@
 <span class='kw'>let</span> <span class='ident'>checker</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
               .<span class='ident'>dictionary</span>(<span class='string'>&quot;british&quot;</span>)
               .<span class='ident'>launch</span>()
-              .<span class='ident'>unwrap</span>();<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+              .<span class='ident'>unwrap</span>();</pre>
 
 <ul>
 <li>Launches <code>aspell</code> with french (France) language:</li>
@@ -74,23 +76,40 @@
               .<span class='ident'>aspell</span>()
               .<span class='ident'>dictionary</span>(<span class='string'>&quot;fr_FR&quot;</span>)
               .<span class='ident'>launch</span>()
-              .<span class='ident'>unwrap</span>();<a class='test-arrow' target='_blank' href=''>Run</a></pre>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-127' class='srclink' href='../src/ispell/src/spell_launcher.rs.html#51-135' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span></h4>
+              .<span class='ident'>unwrap</span>();</pre>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-176' class='srclink' href='../src/ispell/src/spell_launcher.rs.html#52-171' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></h4>
 <div class='docblock'><p>Creates a new spell checker with default options</p>
-</div><h4 id='method.aspell' class='method'><span id='aspell.v' class='invisible'><code>fn <a href='#method.aspell' class='fnname'>aspell</a>(&amp;mut self) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span></h4>
+</div><h4 id='method.aspell' class='method'><code>fn <a href='#method.aspell' class='fnname'>aspell</a>(&amp;mut self) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></h4>
 <div class='docblock'><p>Sets mode to aspell instead of ispell.</p>
 
 <p>Will run <code>aspell</code> as the command if it is not set</p>
-</div><h4 id='method.hunspell' class='method'><span id='hunspell.v' class='invisible'><code>fn <a href='#method.hunspell' class='fnname'>hunspell</a>(&amp;mut self) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span></h4>
+</div><h4 id='method.hunspell' class='method'><code>fn <a href='#method.hunspell' class='fnname'>hunspell</a>(&amp;mut self) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></h4>
 <div class='docblock'><p>Sets compatibility mode to hunspell instead of ispell.</p>
 
 <p>Will run <code>hunspell</code> as the command if it is not set</p>
-</div><h4 id='method.command' class='method'><span id='command.v' class='invisible'><code>fn <a href='#method.command' class='fnname'>command</a>&lt;S:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html' title='core::convert::Into'>Into</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;&gt;(&amp;mut self, command: S) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span></h4>
+</div><h4 id='method.ispell' class='method'><code>fn <a href='#method.ispell' class='fnname'>ispell</a>(&amp;mut self) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></h4>
+<div class='docblock'><p>Sets compatibility mode to ispell</p>
+
+<p>Will run <code>ispell</code> as the command if it is not set
+(default setting)</p>
+</div><h4 id='method.timeout' class='method'><code>fn <a href='#method.timeout' class='fnname'>timeout</a>(&amp;mut self, timeout: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></h4>
+<div class='docblock'><p>Sets the timeout when checking ispell</p>
+
+<p>If the spawned process takes longer than this timeout to answer to a query,
+it will be killed and an error will be returned, preventing your program
+from freezing indefinitely.</p>
+
+<p>The timeout is set in milliseconds, and is 1000 (a second) by default.</p>
+</div><h4 id='method.command' class='method'><code>fn <a href='#method.command' class='fnname'>command</a>&lt;S:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html' title='core::convert::Into'>Into</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;&gt;(&amp;mut self, command: S) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></h4>
 <div class='docblock'><p>Set the name of the command to run</p>
 
 <p>By default, it inferred from the mode (which is <code>ispell</code> by default).</p>
-</div><h4 id='method.dictionary' class='method'><span id='dictionary.v' class='invisible'><code>fn <a href='#method.dictionary' class='fnname'>dictionary</a>&lt;S:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html' title='core::convert::Into'>Into</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;&gt;(&amp;mut self, lang: S) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span></h4>
+
+<p>Unless you want to run a specific (ispell-compatible) command, you shouldn&#39;t use this method directly, but rather
+use the <code>aspell</code> or <code>hunspell</code> methods, since this also allow the the library to know which actual program
+is runned and to set encoding options accordingly.</p>
+</div><h4 id='method.dictionary' class='method'><code>fn <a href='#method.dictionary' class='fnname'>dictionary</a>&lt;S:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html' title='core::convert::Into'>Into</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;&gt;(&amp;mut self, lang: S) -&gt; &amp;mut <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></h4>
 <div class='docblock'><p>Determine the dictionary that should be used.</p>
 
 <p>Note that <code>ispell</code>, <code>hunspell</code> and <code>aspell</code> have different naming schemes:</p>
@@ -108,11 +127,11 @@
               .<span class='ident'>aspell</span>()
               .<span class='ident'>dictionary</span>(<span class='string'>&quot;en_GB&quot;</span>)
               .<span class='ident'>launch</span>()
-              .<span class='ident'>unwrap</span>();<a class='test-arrow' target='_blank' href=''>Run</a></pre>
-</div><h4 id='method.launch' class='method'><span id='launch.v' class='invisible'><code>fn <a href='#method.launch' class='fnname'>launch</a>(&amp;self) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a>&gt;</code></span></h4>
+              .<span class='ident'>unwrap</span>();</pre>
+</div><h4 id='method.launch' class='method'><code>fn <a href='#method.launch' class='fnname'>launch</a>(&amp;self) -&gt; <a class='type' href='../ispell/type.Result.html' title='ispell::Result'>Result</a>&lt;<a class='struct' href='../ispell/struct.SpellChecker.html' title='ispell::SpellChecker'>SpellChecker</a>&gt;</code></h4>
 <div class='docblock'><p>Launch <code>ispell</code> (or <code>aspell</code> or <code>hunspell</code>) and return a <code>SpellChecker</code></p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-108' class='srclink' href='../src/ispell/src/spell_launcher.rs.html#37' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../ispell/struct.SpellLauncher.html' title='ispell::SpellLauncher'>SpellLauncher</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-151' class='srclink' href='../src/ispell/src/spell_launcher.rs.html#37' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>

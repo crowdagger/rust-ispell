@@ -47,7 +47,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-269' class='srclink' href='../src/ispell/src/ispell_result.rs.html#24-54' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-369' class='srclink' href='../src/ispell/src/ispell_result.rs.html#24-54' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum IspellResult {
     Ok,
     Root(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>),
@@ -59,32 +59,32 @@
 
 <p>See the manpage <code>ispell(1)</code> for more informations about the meaning of each variant.</p>
 </div><h2 class='variants'>Variants</h2>
-<span id='variant.Ok' class='variant'><span id='Ok.v' class='invisible'><code>Ok</code></span></span><div class='docblock'><p>The word was found in the dictionnary.</p>
+<span id='variant.Ok' class='variant'><code>Ok</code></span><div class='docblock'><p>The word was found in the dictionnary.</p>
 
 <p>Corresponds to &#39;*&#39;</p>
-</div><span id='variant.Root' class='variant'><span id='Root.v' class='invisible'><code>Root(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>)</code></span></span><div class='docblock'><p>The word wasn&#39;t found, but a root word was found.</p>
+</div><span id='variant.Root' class='variant'><code>Root(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>)</code></span><div class='docblock'><p>The word wasn&#39;t found, but a root word was found.</p>
 
 <p>Corresponds to &#39;+&#39;</p>
-</div><span id='variant.Compound' class='variant'><span id='Compound.v' class='invisible'><code>Compound</code></span></span><div class='docblock'><p>The word wasn&#39;t found, but corresponds to the concatenation of two words</p>
+</div><span id='variant.Compound' class='variant'><code>Compound</code></span><div class='docblock'><p>The word wasn&#39;t found, but corresponds to the concatenation of two words</p>
 
 <p>Corresponds to &#39;-&#39;</p>
-</div><span id='variant.Miss' class='variant'><span id='Miss.v' class='invisible'><code>Miss(<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>)</code></span></span><div class='docblock'><p>The word wasn&#39;t found, but there are near misses</p>
+</div><span id='variant.Miss' class='variant'><code>Miss(<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>)</code></span><div class='docblock'><p>The word wasn&#39;t found, but there are near misses</p>
 
 <p>Corresponds to &#39;&amp;&#39;</p>
-</div><span id='variant.Guess' class='variant'><span id='Guess.v' class='invisible'><code>Guess(<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>)</code></span></span><div class='docblock'><p>The word wasn&#39;t found, but could be formed by adding illegal affixes to a known root</p>
+</div><span id='variant.Guess' class='variant'><code>Guess(<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>)</code></span><div class='docblock'><p>The word wasn&#39;t found, but could be formed by adding illegal affixes to a known root</p>
 
 <p>Corresponds to &#39;?&#39;</p>
-</div><span id='variant.None' class='variant'><span id='None.v' class='invisible'><code>None(<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>)</code></span></span><div class='docblock'><p>The word wasn&#39;t found in the dictionnary and there are no suggestions</p>
+</div><span id='variant.None' class='variant'><code>None(<a class='struct' href='../ispell/struct.IspellError.html' title='ispell::IspellError'>IspellError</a>)</code></span><div class='docblock'><p>The word wasn&#39;t found in the dictionnary and there are no suggestions</p>
 
 <p>Corresponds to &#39;#&#39;</p>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-280' class='srclink' href='../src/ispell/src/ispell_result.rs.html#23' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-294' class='srclink' href='../src/ispell/src/ispell_result.rs.html#23' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.eq' class='method'><span id='eq.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></h4>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-328' class='srclink' href='../src/ispell/src/ispell_result.rs.html#23' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <div class='docblock'><p>This method tests for <code>self</code> and <code>other</code> values to be equal, and is used by <code>==</code>. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq">Read more</a></p>
-</div><h4 id='method.ne' class='method'><span id='ne.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></h4>
+</div><h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <div class='docblock'><p>This method tests for <code>!=</code>.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../ispell/enum.IspellResult.html' title='ispell::IspellResult'>IspellResult</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-355' class='srclink' href='../src/ispell/src/ispell_result.rs.html#23' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

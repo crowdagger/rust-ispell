@@ -47,9 +47,9 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-0' class='srclink' href='../src/ispell/src/lib.rs.html#5-118' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>This library provides an interface for easily calling the <code>ispell</code>
-or <code>aspell</code> command from Rust programs.</p>
+               </span><a id='src-0' class='srclink' href='../src/ispell/src/lib.rs.html#5-153' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>This library provides an interface for easily calling the <code>ispell</code>, <code>aspell</code>
+or <code>hunspell</code> command from Rust programs.</p>
 
 <h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
 <pre class='rust rust-example-rendered'>
@@ -59,29 +59,39 @@ or <code>aspell</code> command from Rust programs.</p>
                  .<span class='ident'>launch</span>()
                  .<span class='ident'>unwrap</span>();
 <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;Testing iff if it works&quot;</span>).<span class='ident'>unwrap</span>();
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>errors</span>[<span class='number'>0</span>].<span class='ident'>mispelled</span>, <span class='string'>&quot;iff&quot;</span>);<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>errors</span>[<span class='number'>0</span>].<span class='ident'>misspelled</span>, <span class='string'>&quot;iff&quot;</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>errors</span>[<span class='number'>0</span>].<span class='ident'>position</span>, <span class='number'>8</span>);</pre>
 
 <h1 id='the-spelllauncher' class='section-header'><a href='#the-spelllauncher'>The <code>SpellLauncher</code></a></h1>
-<p>You can set the command that will be called manually:</p>
+<p>You can set the command that will be called by using the <code>aspell</code>, <code>hunspell</code> and
+<code>ispell</code> (default value) methods:</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
-             .<span class='ident'>command</span>(<span class='string'>&quot;foo&quot;</span>)
-             .<span class='ident'>launch</span>();<a class='test-arrow' target='_blank' href=''>Run</a></pre>
-
-<p>but the easiest way to set which alternative must be used is with
-the <code>aspell</code> and <code>hunspell</code> methods:</p>
+             .<span class='ident'>aspell</span>()
+             .<span class='ident'>launch</span>();</pre>
 
 <pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
              .<span class='ident'>hunspell</span>()
-             .<span class='ident'>launch</span>();<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+             .<span class='ident'>launch</span>();</pre>
+
+<p>You can also set the dictionary that must be used:</p>
+
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>checker</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
+              .<span class='ident'>aspell</span>()
+              .<span class='ident'>dictionary</span>(<span class='string'>&quot;en_GB&quot;</span>)
+              .<span class='ident'>launch</span>()
+              .<span class='ident'>unwrap</span>();</pre>
 
 <h1 id='the-spellchecker' class='section-header'><a href='#the-spellchecker'>The <code>SpellChecker</code></a></h1>
-<p>If the command has been launched successfully, it will return a <code>SpellChecker</code>.
-The main usage of this struct is to get the errors
-(<code>IspellError</code>) the spell checker detects with
-<code>SpellChecker::check</code>. The <code>ispell</code> API returns the position (in 
+<p>If the command has been launched successfully, it will return a <code>SpellChecker</code>.</p>
+
+<h2 id='checking-words' class='section-header'><a href='#checking-words'>Checking words</a></h2>
+<p>The main usage of this struct is using the <code>check</code> method to get
+the errors (<code>IspellError</code>) the spell checker detects. The <code>ispell</code>
+API returns the position (in
 characters) from the beginning of the line. This means that, if
 you want to be able do to anything with these numbers, you&#39;ll have
 to call <code>check</code> line by line.</p>
@@ -89,7 +99,7 @@ to call <code>check</code> line by line.</p>
 <p>This method returns a list of <code>IspellError</code>s, containing:</p>
 
 <ul>
-<li>the mispelled word;</li>
+<li>the misspelled word;</li>
 <li>the position (number of characters since the beginning of the
 line);</li>
 <li>a (possibly empty) list of suggestions.</li>
@@ -101,21 +111,39 @@ line);</li>
                   .<span class='ident'>unwrap</span>();
 <span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;Does thit message contain any erors?&quot;</span>).<span class='ident'>unwrap</span>();
 <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>errors</span> {
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{} was mispelled at pos {}.&quot;</span>, <span class='ident'>e</span>.<span class='ident'>mispelled</span>, <span class='ident'>e</span>.<span class='ident'>position</span>);
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{} was misspelled at pos {}.&quot;</span>, <span class='ident'>e</span>.<span class='ident'>misspelled</span>, <span class='ident'>e</span>.<span class='ident'>position</span>);
     <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;There are {} suggestions for alternatives&quot;</span>, <span class='ident'>e</span>.<span class='ident'>suggestions</span>.<span class='ident'>len</span>());
-}<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+}</pre>
 
 <p><code>SpellChecker</code> also provides the <code>check_raw</code> method, whose behaviour mimics more closely
 ispell&#39;s output.</p>
 
-<h1 id='languages-and-encodings' class='section-header'><a href='#languages-and-encodings'>Languages and encodings</a></h1>
+<h2 id='adding-words' class='section-header'><a href='#adding-words'>Adding words</a></h2>
+<p>There are two methods to add words so they are no more detected as errors:</p>
+
+<ul>
+<li><code>add_word</code> adds a word to this current session, but doesn&#39;t save it;</li>
+<li><code>add_word_to_dictionary</code> adds a word to your personal dictionary, saving it for
+next sessions.</li>
+</ul>
+
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>checker</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
+                  .<span class='ident'>launch</span>()
+                  .<span class='ident'>unwrap</span>();
+<span class='ident'>checker</span>.<span class='ident'>add_word</span>(<span class='string'>&quot;foobar&quot;</span>); <span class='comment'>// Add a word only to this session</span>
+<span class='ident'>checker</span>.<span class='ident'>add_word_to_dictionary</span>(<span class='string'>&quot;rustacean&quot;</span>); <span class='comment'>// Add a word and saves it</span>
+<span class='kw'>let</span> <span class='ident'>errors</span> <span class='op'>=</span> <span class='ident'>checker</span>.<span class='ident'>check</span>(<span class='string'>&quot;foobar rustacean&quot;</span>).<span class='ident'>unwrap</span>();
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>errors</span>.<span class='ident'>is_empty</span>());</pre>
+
+<h1 id='languages' class='section-header'><a href='#languages'>Languages</a></h1>
 <p><code>ispell</code>, <code>aspell</code> and <code>hunspell</code> all allow you to specify which dictionary must be used,
 but they don&#39;t necessarily use the same naming scheme. <code>ispell</code> uses full names:</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
              .<span class='ident'>dictionary</span>(<span class='string'>&quot;american&quot;</span>)
-             .<span class='ident'>launch</span>();<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+             .<span class='ident'>launch</span>();</pre>
 
 <p><code>hunspell</code> uses unicode language codes:</p>
 
@@ -123,46 +151,47 @@ but they don&#39;t necessarily use the same naming scheme. <code>ispell</code> u
 <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>SpellLauncher</span>::<span class='ident'>new</span>()
              .<span class='ident'>hunspell</span>()
              .<span class='ident'>dictionary</span>(<span class='string'>&quot;en_US&quot;</span>)
-             .<span class='ident'>launch</span>();<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+             .<span class='ident'>launch</span>();</pre>
 
 <p>whereas <code>aspell</code> accepts both versions.</p>
 
-<p>Currently, no encoding is specified when runnig i/a/hun/spell, so, depending on the system
-you are using and the command you use, it is possible you&#39;ll encounter problems if you use non-ASCII characters.</p>
+<h1 id='character-encoding' class='section-header'><a href='#character-encoding'>Character encoding</a></h1>
+<p>This library tries to set encoding to <code>utf-8</code>, but ispell, hunspell and aspell take different arguments
+for that (<code>-T</code>, <code>-i</code> and <code>--encoding</code>, respectively). This is why
+you should use the <code>ispell</code>, <code>aspell</code> and <code>hunspell</code> methods
+intead of setting the command to invoke with the <code>command</code> method.</p>
 
-<h1 id='warning' class='section-header'><a href='#warning'>Warning</a></h1>
-<p>This library hasn&#39;t been tested a lot yet. It tries to avoid
-<code>panic!</code>s but, unfortunately, since <code>Read</code>s are blocking, there is
-a risk that it will simply hang up infinitely (particularly if you use
-<code>SpellLauncher::command(...)</code> to launch a process that doesn&#39;t comply with
-the ispell API).</p>
+<h1 id='requirements' class='section-header'><a href='#requirements'>Requirements</a></h1>
+<p><code>rust-ispell</code> requires the <code>1.12.0</code> (or a more recent) version of the
+<code>rustc</code> compiler, since it uses the <code>std::sync::mpcs::Receiver::recv_timeout</code>
+that was only stabilized in this version. </p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class='struct' href='struct.Error.html'
                                   title='ispell::Error'>Error</a></td>
-                           <td class='docblock-short'>
+                           <td class='docblock short'>
                                 <p>Error type returned by methods of this library</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class='struct' href='struct.IspellError.html'
                                   title='ispell::IspellError'>IspellError</a></td>
-                           <td class='docblock-short'>
+                           <td class='docblock short'>
                                 <p>An ispell error, corresponding to a word that isn&#39;t in the dictonary.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class='struct' href='struct.SpellChecker.html'
                                   title='ispell::SpellChecker'>SpellChecker</a></td>
-                           <td class='docblock-short'>
+                           <td class='docblock short'>
                                 <p>Spell Checker</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class='struct' href='struct.SpellLauncher.html'
                                   title='ispell::SpellLauncher'>SpellLauncher</a></td>
-                           <td class='docblock-short'>
+                           <td class='docblock short'>
                                 <p>Spell Launcher wizard (ah, ah). A builder for <code>SpellChecker</code>.</p>
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
@@ -170,7 +199,7 @@ the ispell API).</p>
                        <tr class=' module-item'>
                            <td><a class='enum' href='enum.IspellResult.html'
                                   title='ispell::IspellResult'>IspellResult</a></td>
-                           <td class='docblock-short'>
+                           <td class='docblock short'>
                                 <p>A result from ispell, corresponding to a line that is sent back for each word.</p>
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
@@ -178,7 +207,7 @@ the ispell API).</p>
                        <tr class=' module-item'>
                            <td><a class='type' href='type.Result.html'
                                   title='ispell::Result'>Result</a></td>
-                           <td class='docblock-short'>
+                           <td class='docblock short'>
                                 <p>Result type (returned by most methods of this library)</p>
                            </td>
                        </tr></table></section>

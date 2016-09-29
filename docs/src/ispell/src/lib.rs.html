@@ -160,13 +160,48 @@
 <span id="116">116</span>
 <span id="117">117</span>
 <span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
 </pre><pre class='rust '>
 <span class='comment'>// This Source Code Form is subject to the terms of the Mozilla Public</span>
 <span class='comment'>// License, v. 2.0. If a copy of the MPL was not distributed with</span>
 <span class='comment'>// this file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
 
-<span class='doccomment'>//! This library provides an interface for easily calling the `ispell`</span>
-<span class='doccomment'>//! or `aspell` command from Rust programs.</span>
+<span class='doccomment'>//! This library provides an interface for easily calling the `ispell`, `aspell`</span>
+<span class='doccomment'>//! or `hunspell` command from Rust programs.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! # Example</span>
 <span class='doccomment'>//!</span>
@@ -177,22 +212,21 @@
 <span class='doccomment'>//!                  .launch()</span>
 <span class='doccomment'>//!                  .unwrap();</span>
 <span class='doccomment'>//! let errors = checker.check(&quot;Testing iff if it works&quot;).unwrap();</span>
-<span class='doccomment'>//! assert_eq!(&amp;errors[0].mispelled, &quot;iff&quot;);</span>
+<span class='doccomment'>//! assert_eq!(&amp;errors[0].misspelled, &quot;iff&quot;);</span>
+<span class='doccomment'>//! assert_eq!(errors[0].position, 8);</span>
 <span class='doccomment'>//! ```</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! # The `SpellLauncher`</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! You can set the command that will be called manually:</span>
+<span class='doccomment'>//! You can set the command that will be called by using the `aspell`, `hunspell` and</span>
+<span class='doccomment'>//! `ispell` (default value) methods:</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! ```</span>
 <span class='doccomment'>//! # use ispell::SpellLauncher;</span>
 <span class='doccomment'>//! let result = SpellLauncher::new()</span>
-<span class='doccomment'>//!              .command(&quot;foo&quot;)</span>
+<span class='doccomment'>//!              .aspell()</span>
 <span class='doccomment'>//!              .launch();</span>
 <span class='doccomment'>//! ```</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! but the easiest way to set which alternative must be used is with</span>
-<span class='doccomment'>//! the `aspell` and `hunspell` methods:</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! ```</span>
 <span class='doccomment'>//! # use ispell::SpellLauncher;</span>
@@ -201,19 +235,33 @@
 <span class='doccomment'>//!              .launch();</span>
 <span class='doccomment'>//! ```</span>
 <span class='doccomment'>//!</span>
+<span class='doccomment'>//! You can also set the dictionary that must be used:</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! ```</span>
+<span class='doccomment'>//! # use ispell::SpellLauncher;</span>
+<span class='doccomment'>//! let checker = SpellLauncher::new()</span>
+<span class='doccomment'>//!               .aspell()</span>
+<span class='doccomment'>//!               .dictionary(&quot;en_GB&quot;)</span>
+<span class='doccomment'>//!               .launch()</span>
+<span class='doccomment'>//!               .unwrap();</span>
+<span class='doccomment'>//! ```</span>
+<span class='doccomment'>//!</span>
 <span class='doccomment'>//! # The `SpellChecker`</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! If the command has been launched successfully, it will return a `SpellChecker`.</span>
-<span class='doccomment'>//! The main usage of this struct is to get the errors</span>
-<span class='doccomment'>//! (`IspellError`) the spell checker detects with</span>
-<span class='doccomment'>//! `SpellChecker::check`. The `ispell` API returns the position (in </span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! ## Checking words</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! The main usage of this struct is using the `check` method to get</span>
+<span class='doccomment'>//! the errors (`IspellError`) the spell checker detects. The `ispell`</span>
+<span class='doccomment'>//! API returns the position (in</span>
 <span class='doccomment'>//! characters) from the beginning of the line. This means that, if</span>
 <span class='doccomment'>//! you want to be able do to anything with these numbers, you&#39;ll have</span>
 <span class='doccomment'>//! to call `check` line by line.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! This method returns a list of `IspellError`s, containing:</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! * the mispelled word;</span>
+<span class='doccomment'>//! * the misspelled word;</span>
 <span class='doccomment'>//! * the position (number of characters since the beginning of the</span>
 <span class='doccomment'>//! line);</span>
 <span class='doccomment'>//! * a (possibly empty) list of suggestions.</span>
@@ -225,7 +273,7 @@
 <span class='doccomment'>//!                   .unwrap();</span>
 <span class='doccomment'>//! let errors = checker.check(&quot;Does thit message contain any erors?&quot;).unwrap();</span>
 <span class='doccomment'>//! for e in errors {</span>
-<span class='doccomment'>//!     println!(&quot;{} was mispelled at pos {}.&quot;, e.mispelled, e.position);</span>
+<span class='doccomment'>//!     println!(&quot;{} was misspelled at pos {}.&quot;, e.misspelled, e.position);</span>
 <span class='doccomment'>//!     println!(&quot;There are {} suggestions for alternatives&quot;, e.suggestions.len());</span>
 <span class='doccomment'>//! }</span>
 <span class='doccomment'>//! ```</span>
@@ -233,7 +281,26 @@
 <span class='doccomment'>//! `SpellChecker` also provides the `check_raw` method, whose behaviour mimics more closely</span>
 <span class='doccomment'>//! ispell&#39;s output.</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! # Languages and encodings</span>
+<span class='doccomment'>//! ## Adding words</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! There are two methods to add words so they are no more detected as errors:</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! * `add_word` adds a word to this current session, but doesn&#39;t save it;</span>
+<span class='doccomment'>//! * `add_word_to_dictionary` adds a word to your personal dictionary, saving it for</span>
+<span class='doccomment'>//!    next sessions.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! ```</span>
+<span class='doccomment'>//! # use ispell::SpellLauncher;</span>
+<span class='doccomment'>//! let mut checker = SpellLauncher::new()</span>
+<span class='doccomment'>//!                   .launch()</span>
+<span class='doccomment'>//!                   .unwrap();</span>
+<span class='doccomment'>//! checker.add_word(&quot;foobar&quot;); // Add a word only to this session</span>
+<span class='doccomment'>//! checker.add_word_to_dictionary(&quot;rustacean&quot;); // Add a word and saves it</span>
+<span class='doccomment'>//! let errors = checker.check(&quot;foobar rustacean&quot;).unwrap();</span>
+<span class='doccomment'>//! assert!(errors.is_empty());</span>
+<span class='doccomment'>//! ```</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! # Languages</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! `ispell`, `aspell` and `hunspell` all allow you to specify which dictionary must be used,</span>
 <span class='doccomment'>//! but they don&#39;t necessarily use the same naming scheme. `ispell` uses full names:</span>
@@ -257,21 +324,24 @@
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! whereas `aspell` accepts both versions.</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! Currently, no encoding is specified when runnig i/a/hun/spell, so, depending on the system</span>
-<span class='doccomment'>//! you are using and the command you use, it is possible you&#39;ll encounter problems if you use non-ASCII characters.</span>
+<span class='doccomment'>//! # Character encoding</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! # Warning</span>
+<span class='doccomment'>//! This library tries to set encoding to `utf-8`, but ispell, hunspell and aspell take different arguments</span>
+<span class='doccomment'>//! for that (`-T`, `-i` and `--encoding`, respectively). This is why</span>
+<span class='doccomment'>//! you should use the `ispell`, `aspell` and `hunspell` methods</span>
+<span class='doccomment'>//! intead of setting the command to invoke with the `command` method.</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//!  This library hasn&#39;t been tested a lot yet. It tries to avoid</span>
-<span class='doccomment'>//! `panic!`s but, unfortunately, since `Read`s are blocking, there is</span>
-<span class='doccomment'>//! a risk that it will simply hang up infinitely (particularly if you use</span>
-<span class='doccomment'>//! `SpellLauncher::command(...)` to launch a process that doesn&#39;t comply with</span>
-<span class='doccomment'>//! the ispell API).</span>
+<span class='doccomment'>//! # Requirements</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! `rust-ispell` requires the `1.12.0` (or a more recent) version of the</span>
+<span class='doccomment'>//! `rustc` compiler, since it uses the `std::sync::mpcs::Receiver::recv_timeout`</span>
+<span class='doccomment'>//! that was only stabilized in this version. </span>
 
 <span class='kw'>mod</span> <span class='ident'>spell_checker</span>;
 <span class='kw'>mod</span> <span class='ident'>spell_launcher</span>;
 <span class='kw'>mod</span> <span class='ident'>error</span>;
 <span class='kw'>mod</span> <span class='ident'>ispell_result</span>;
+<span class='kw'>mod</span> <span class='ident'>async_reader</span>;
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>ispell_result</span>::<span class='ident'>IspellResult</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>ispell_result</span>::<span class='ident'>IspellError</span>;
