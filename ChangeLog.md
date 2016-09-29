@@ -1,6 +1,10 @@
 ChangeLog 
 =========
 
+unreleased
+----------
+* No longer blocks if the spawned process stops outputting text.
+
 0.2.0 (2016-09-26) 
 ------------------
 * Slightly fix the API:
