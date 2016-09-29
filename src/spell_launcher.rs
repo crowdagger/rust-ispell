@@ -56,7 +56,7 @@ impl SpellLauncher {
             lang: None,
             command: None,
             mode: Mode::Ispell,
-            timeout: 100,
+            timeout: 1000,
         }
     }
 
@@ -74,7 +74,7 @@ impl SpellLauncher {
     /// it will be killed and an error will be returned, preventing your program
     /// from freezing indefinitely.
     ///
-    /// The timeout is set in milliseconds, and is 100 by default.
+    /// The timeout is set in milliseconds, and is 1000 (a second) by default.
     pub fn timeout(&mut self, timeout: u64) -> &mut SpellLauncher {
         self.timeout = timeout;
         self
@@ -118,7 +118,7 @@ impl SpellLauncher {
         self.lang = Some(lang.into());
         self
     }
-
+    
     /// Launch `ispell` (or `aspell` or `hunspell`) and return a `SpellChecker`
     pub fn launch(&self) -> Result<SpellChecker> {
         let command_name: &str = if let Some(ref command) = self.command {
@@ -131,15 +131,20 @@ impl SpellLauncher {
             }
         };
         let mut command = Command::new(command_name);
-        command
-            .arg("-a")
-            .arg("42")
+        command.arg("-a")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped());
         if let Some(ref lang) = self.lang {
             command.arg("-d")
                 .arg(lang);
         }
+        // Try to set encoding to utf-8
+        match self.mode {
+            Mode::Hunspell => command.args(&["-i", "utf-8"]),
+            Mode::Aspell => command.arg("--encoding=utf-8"),
+            Mode::Ispell => command.arg("-Tutf8"),
+        };
+        
         let res = command.spawn();
 
         match res {

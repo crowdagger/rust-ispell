@@ -16,6 +16,7 @@ enum ErrorType {
     Process,
     Utf8,
     Protocol,
+    InvalidWord,
 }
 
 /// Result type (returned by most methods of this library)
@@ -64,6 +65,16 @@ impl Error {
         Error {
             msg: msg.into(),
             variant: ErrorType::Protocol,
+        }
+    }
+
+    /// Creates a new invalid word error
+    ///
+    /// (when the user uses illegal characters in a word)
+    pub fn invalid_word<S: Into<String>>(msg: S) -> Error {
+        Error {
+            msg: msg.into(),
+            variant: ErrorType::InvalidWord,
         }
     }
 }

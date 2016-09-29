@@ -6,7 +6,7 @@ use std::process::{Child, ChildStdin};
 use std::io::Write;
 use std::time::Duration;
 use std::thread;
-use std::sync::mpsc::{channel,Receiver};
+use std::sync::mpsc::{channel, Receiver, TryRecvError};
 
 use error::{Result, Error};
 use ispell_result::{IspellResult, IspellError};
@@ -79,14 +79,76 @@ impl SpellChecker {
         }
     }
 
-    /// Write to ispell stdinn
+    /// Flushes the stdout of the spawned process, so we are sure we start
+    /// reading an answer to what we just wrote
+    fn flush_stdout(&mut self) -> Result<()> {
+        println!("flushing!");
+        loop {
+            match self.receiver.try_recv() {
+                Ok(r) => println!("received unexpected {:?}", r),
+                    //continue,
+                Err(TryRecvError::Empty) => break,
+                Err(TryRecvError::Disconnected) => return Err(Error::process("spawned process closed its stdout early, aborting")),
+            }
+        }
+        println!("done!");
+        Ok(())
+    }
+
+    /// Write to ispell stdin
     fn write_str(&mut self, text: &str) -> Result<()> {
+        // First, clear ispell's stdout just in case
+        try!(self.flush_stdout());
+        
         try!(self.stdin.write_all(b"^"));
         try!(self.stdin.write_all(text.as_bytes()));
         try!(self.stdin.write_all(b"\n"));
         try!(self.stdin.flush());
         Ok(())
     }
+
+    /// Adds a word to your personal dictionary
+    ///
+    /// Uses the *word command (see ispell manual)
+    ///
+    /// Returns an error if `word` contains spaces or illegal characters
+    ///
+    /// # Examples
+    ///
+    /// Adding a valid word
+    ///
+    /// ```rust,no_run
+    /// use ispell::SpellLauncher;
+    ///
+    /// fn main() {
+    ///     let mut checker = SpellLauncher::new()
+    ///         .launch()
+    ///         .unwrap();
+    ///    
+    ///     // "rustacean" is not a valid word...
+    ///     let errors = checker.check("rustacean").unwrap();
+    ///     assert_eq!(errors.len(), 1);
+    ///
+    ///     // let's add it to our personal dictionary
+    ///     checker.add_word_to_dictionary("rustacean").unwrap();
+    ///
+    ///     // now it is a valid word
+    ///     let errors = checker.check("rustacean").unwrap();
+    ///     assert!(errors.is_empty());
+    /// }
+    /// ```
+    pub fn add_word_to_dictionary(&mut self, word: &str) -> Result<()> {
+        if word.contains(|c:char| !c.is_alphabetic()) {
+            return Err(Error::invalid_word(format!("word '{}' contains non alphabetic characters",
+                                                   word)));
+        }
+        try!(self.stdin.write_all(b"*"));
+        try!(self.stdin.write_all(word.as_bytes()));
+        try!(self.stdin.write_all(b"\n"));
+        try!(self.stdin.flush());
+        Ok(())
+    }
+    
 
     /// Checks the spelling of a line.
     ///
@@ -126,9 +188,8 @@ impl SpellChecker {
 
         
         while n_lines < n_words {
-            println!("1");
             let s = try!(self.read_str());
-            println!("2");
+            println!("got: {}", s);
             for line in s.lines() {
                 if n_lines >= n_words {
                     break;
