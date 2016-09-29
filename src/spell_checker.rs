@@ -81,8 +81,9 @@ impl SpellChecker {
 
     /// Write to ispell stdinn
     fn write_str(&mut self, text: &str) -> Result<()> {
+        try!(self.stdin.write_all(b"^"));
         try!(self.stdin.write_all(text.as_bytes()));
-        try!(self.stdin.write_all("\n".as_bytes()));
+        try!(self.stdin.write_all(b"\n"));
         try!(self.stdin.flush());
         Ok(())
     }
