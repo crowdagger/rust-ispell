@@ -28,7 +28,7 @@ fn main() {
         .unwrap();
     let errors = checker.check("A simpel test to see if it detetcs typing errors").unwrap();
     for e in errors {
-        println!("'{}' (pos: {}) is mispelled!", &e.mispelled, e.position);
+        println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
         if !e.suggestions.is_empty() {
             println!("Maybe you meant '{}'?", &e.suggestions[0]);
         }
@@ -39,9 +39,9 @@ fn main() {
 will display:
 
 ```
-'simpel' (pos: 2) is mispelled!
+'simpel' (pos: 2) is misspelled!
 Maybe you meant 'simple'?
-'detetcs' (pos: 27) is mispelled!
+'detetcs' (pos: 27) is misspelled!
 Maybe you meant 'dietetics'?
 ```
 

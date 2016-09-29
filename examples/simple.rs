@@ -10,7 +10,7 @@ fn display(errors: &[IspellError]) {
         println!("No error, congratulations!");
     } else {
         for e in errors {
-            print!("'{}' (at pos {}) is mispelled.", e.mispelled, e.position);
+            print!("'{}' (at pos {}) is misspelled.", e.misspelled, e.position);
             if !e.suggestions.is_empty() {
                 print!(" Maybe you meant '{}'?", e.suggestions[0]);
             }

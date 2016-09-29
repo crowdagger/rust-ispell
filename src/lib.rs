@@ -14,7 +14,7 @@
 //!                  .launch()
 //!                  .unwrap();
 //! let errors = checker.check("Testing iff if it works").unwrap();
-//! assert_eq!(&errors[0].mispelled, "iff");
+//! assert_eq!(&errors[0].misspelled, "iff");
 //! ```
 //!
 //! # The `SpellLauncher`
@@ -50,7 +50,7 @@
 //!
 //! This method returns a list of `IspellError`s, containing:
 //!
-//! * the mispelled word;
+//! * the misspelled word;
 //! * the position (number of characters since the beginning of the
 //! line);
 //! * a (possibly empty) list of suggestions.
@@ -62,7 +62,7 @@
 //!                   .unwrap();
 //! let errors = checker.check("Does thit message contain any erors?").unwrap();
 //! for e in errors {
-//!     println!("{} was mispelled at pos {}.", e.mispelled, e.position);
+//!     println!("{} was misspelled at pos {}.", e.misspelled, e.position);
 //!     println!("There are {} suggestions for alternatives", e.suggestions.len());
 //! }
 //! ```

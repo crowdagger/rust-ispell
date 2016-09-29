@@ -6,8 +6,8 @@
 /// An ispell error, corresponding to a word that isn't in the dictonary.
 #[derive(Debug, PartialEq)]
 pub struct IspellError {
-    /// The mispelled word
-    pub mispelled: String,
+    /// The misspelled word
+    pub misspelled: String,
 
     /// The position of the word
     /// (number of characters since the beginning of the new line)

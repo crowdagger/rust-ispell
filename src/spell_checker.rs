@@ -82,16 +82,13 @@ impl SpellChecker {
     /// Flushes the stdout of the spawned process, so we are sure we start
     /// reading an answer to what we just wrote
     fn flush_stdout(&mut self) -> Result<()> {
-        println!("flushing!");
         loop {
             match self.receiver.try_recv() {
-                Ok(r) => println!("received unexpected {:?}", r),
-                    //continue,
+                Ok(_) => continue,
                 Err(TryRecvError::Empty) => break,
                 Err(TryRecvError::Disconnected) => return Err(Error::process("spawned process closed its stdout early, aborting")),
             }
         }
-        println!("done!");
         Ok(())
     }
 
@@ -240,7 +237,6 @@ impl SpellChecker {
         
         while n_lines < n_words {
             let s = try!(self.read_str());
-            println!("got: {}", s);
             for line in s.lines() {
                 if n_lines >= n_words {
                     break;
@@ -304,12 +300,12 @@ fn get_ispell_error(input: &str, n: usize) -> Result<IspellError> {
     if words.len() != n {
         return Err(Error::protocol(format!("unexpected result: {}", input)));
     }
-    let mispelled = words[1].to_owned();
+    let misspelled = words[1].to_owned();
     let position:usize = try!(words[n - 1].parse()
                               .map_err(|_| Error::protocol(format!("could not parse '{}' as an int", words[2]))));
     Ok(IspellError {
-        mispelled: mispelled,
-        position: position,
+        misspelled: misspelled,
+        position: position - 1, // remove the '^' character we add for escaping
         suggestions: vec!(),
         })
 }
