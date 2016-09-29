@@ -109,9 +109,13 @@ impl SpellChecker {
 
     /// Adds a word to your personal dictionary
     ///
-    /// Uses the *word command (see ispell manual)
+    /// The word will be saved to your words file (e.g. `~/.ispell_LANG,` `~/.hunspell_LANG, or `~/.aspell.LANG.pws`),
+    /// so it will be memorized next time you use i/a/hun/spell. If you only want to add the word to
+    /// this current session, use `add_word`.
     ///
-    /// Returns an error if `word` contains spaces or illegal characters
+    /// # Returns
+    ///
+    /// An error if `word` contains spaces or illegal characters
     ///
     /// # Examples
     ///
@@ -126,6 +130,7 @@ impl SpellChecker {
     ///         .unwrap();
     ///    
     ///     // "rustacean" is not a valid word...
+    ///     // (unless you already ran this code example)
     ///     let errors = checker.check("rustacean").unwrap();
     ///     assert_eq!(errors.len(), 1);
     ///
@@ -143,6 +148,52 @@ impl SpellChecker {
                                                    word)));
         }
         try!(self.stdin.write_all(b"*"));
+        try!(self.stdin.write_all(word.as_bytes()));
+        try!(self.stdin.write_all(b"\n"));
+
+        // Save the dictionary
+        try!(self.stdin.flush());
+        try!(self.stdin.write_all(b"#\n"));
+        try!(self.stdin.flush());
+        Ok(())
+    }
+
+    /// Add a word to current session.
+    ///
+    /// This word won't be memorized the next time you use i/a/hun/spell. If you want this behaviour,
+    /// use `add_word_to_dictionary`.
+    ///
+    /// # Returns
+    ///
+    /// An error if `word` contains spaces or illegal characters
+    ///
+    /// ```rust,no_run
+    /// use ispell::SpellLauncher;
+    ///
+    /// fn main() {
+    ///     let mut checker = SpellLauncher::new()
+    ///         .launch()
+    ///         .unwrap();
+    ///    
+    ///     // "rustaholic" is not a valid word...
+    ///     // (even if you already ran this code example)
+    ///     let errors = checker.check("rustaholic").unwrap();
+    ///     assert_eq!(errors.len(), 1);
+    ///
+    ///     // let's add it to this session
+    ///     checker.add_word("rustaholic").unwrap();
+    ///
+    ///     // now it is a valid word
+    ///     let errors = checker.check("rustaholic").unwrap();
+    ///     assert!(errors.is_empty());
+    /// }
+    /// ```
+    pub fn add_word(&mut self, word: &str) -> Result<()> {
+        if word.contains(|c:char| !c.is_alphabetic()) {
+            return Err(Error::invalid_word(format!("word '{}' contains non alphabetic characters",
+                                                   word)));
+        }
+        try!(self.stdin.write_all(b"@"));
         try!(self.stdin.write_all(word.as_bytes()));
         try!(self.stdin.write_all(b"\n"));
         try!(self.stdin.flush());
