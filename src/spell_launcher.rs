@@ -133,6 +133,7 @@ impl SpellLauncher {
         let mut command = Command::new(command_name);
         command
             .arg("-a")
+            .arg("42")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped());
         if let Some(ref lang) = self.lang {

@@ -75,7 +75,7 @@ impl SpellChecker {
     fn read_str(&mut self) -> Result<String> {
         match self.receiver.recv_timeout(self.timeout) {
             Ok(result) => result,
-            Err(_) => Err(Error::process("timeout error: spawned process didn't respond in time, aborting")),
+            Err(_) => return Err(Error::process("timeout error: spawned process didn't respond in time, aborting")),
         }
     }
 
@@ -125,7 +125,9 @@ impl SpellChecker {
 
         
         while n_lines < n_words {
+            println!("1");
             let s = try!(self.read_str());
+            println!("2");
             for line in s.lines() {
                 if n_lines >= n_words {
                     break;

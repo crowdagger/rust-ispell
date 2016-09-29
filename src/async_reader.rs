@@ -31,7 +31,10 @@ impl AsyncReader {
     pub fn read_loop(&mut self)  {
         loop {
             let result = self.read();
-            self.sender.send(result).expect("!!!");
+            match self.sender.send(result) {
+                Ok(_) => (),
+                Err(_) => break, // main process was aborted
+            }
         }
     }
 
