@@ -10,7 +10,7 @@ Add this to your `Cargo.toml`
 
 ```toml
 [dependencies]
-ispell = "0.1"
+ispell = "0.3"
 ```
 
 Example
