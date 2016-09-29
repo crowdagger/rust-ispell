@@ -54,6 +54,13 @@ For more information about using this library, see the
 [API documentation on Github.io](https://lise-henry.github.io/rust-ispell/ispell/)
 or on [docs.rs](https://docs.rs/releases/search?query=ispell).
 
+Requirements
+------------
+
+`rust-ispell` requires the `1.12.0` (or a more recent) version of the
+`rustc` compiler, since it uses the `std::sync::mpcs::Receiver::recv_timeout`
+that was only stabilized in this version. 
+
 ChangeLog
 ---------
 

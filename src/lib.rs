@@ -132,7 +132,12 @@
 //! for that (`-T`, `-i` and `--encoding`, respectively). This is why
 //! you should use the `ispell`, `aspell` and `hunspell` methods
 //! intead of setting the command to invoke with the `command` method.
-
+//!
+//! # Requirements
+//!
+//! `rust-ispell` requires the `1.12.0` (or a more recent) version of the
+//! `rustc` compiler, since it uses the `std::sync::mpcs::Receiver::recv_timeout`
+//! that was only stabilized in this version. 
 
 mod spell_checker;
 mod spell_launcher;
