@@ -1,8 +1,8 @@
 ChangeLog 
 =========
 
-unreleased
-----------
+0.3.0 (2016-09-30)
+------------------
 * Added a `timeout` method to SpellLauncher. This allows to
   specify a timeout (in milliseconds) when reading from spawned
   process's output, so it no longer blocks your program infinitely if
