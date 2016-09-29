@@ -68,6 +68,24 @@ impl SpellLauncher {
         self
     }
 
+    /// Sets compatibility mode to hunspell instead of ispell.
+    ///
+    /// Will run `hunspell` as the command if it is not set
+    pub fn hunspell(&mut self) -> &mut SpellLauncher {
+        self.mode = Mode::Hunspell;
+        self
+    }
+
+    /// Sets compatibility mode to ispell
+    ///
+    /// Will run `ispell` as the command if it is not set
+    /// (default setting)
+    pub fn ispell(&mut self) -> &mut SpellLauncher {
+        self.mode = Mode::Ispell;
+        self
+    }
+
+    
     /// Sets the timeout when checking ispell
     ///
     /// If the spawned process takes longer than this timeout to answer to a query,
@@ -77,14 +95,6 @@ impl SpellLauncher {
     /// The timeout is set in milliseconds, and is 1000 (a second) by default.
     pub fn timeout(&mut self, timeout: u64) -> &mut SpellLauncher {
         self.timeout = timeout;
-        self
-    }
-
-    /// Sets compatibility mode to hunspell instead of ispell.
-    ///
-    /// Will run `hunspell` as the command if it is not set
-    pub fn hunspell(&mut self) -> &mut SpellLauncher {
-        self.mode = Mode::Hunspell;
         self
     }
     
@@ -139,12 +149,14 @@ impl SpellLauncher {
                 .arg(lang);
         }
         // Try to set encoding to utf-8
-        match self.mode {
-            Mode::Hunspell => command.args(&["-i", "utf-8"]),
-            Mode::Aspell => command.arg("--encoding=utf-8"),
-            Mode::Ispell => command.arg("-Tutf8"),
-        };
-        
+        if self.command.is_none() { // only do this if it isn't a custom command
+            match self.mode {
+                Mode::Hunspell => command.args(&["-i", "utf-8"]),
+                Mode::Aspell => command.arg("--encoding=utf-8"),
+                Mode::Ispell => command.arg("-Tutf8"),
+            };
+        }
+
         let res = command.spawn();
 
         match res {
