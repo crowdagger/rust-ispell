@@ -101,6 +101,10 @@ impl SpellLauncher {
     /// Set the name of the command to run
     ///
     /// By default, it inferred from the mode (which is `ispell` by default).
+    ///
+    /// Unless you want to run a specific (ispell-compatible) command, you shouldn't use this method directly, but rather
+    /// use the `aspell` or `hunspell` methods, since this also allow the the library to know which actual program
+    /// is runned and to set encoding options accordingly.
     pub fn command<S: Into<String>>(&mut self, command: S) -> &mut SpellLauncher {
         self.command = Some(command.into());
         self

@@ -2,8 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with
 // this file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 
-//! This library provides an interface for easily calling the `ispell`
-//! or `aspell` command from Rust programs.
+//! This library provides an interface for easily calling the `ispell`, `aspell`
+//! or `hunspell` command from Rust programs.
 //!
 //! # Example
 //!
@@ -15,21 +15,20 @@
 //!                  .unwrap();
 //! let errors = checker.check("Testing iff if it works").unwrap();
 //! assert_eq!(&errors[0].misspelled, "iff");
+//! assert_eq!(errors[0].position, 8);
 //! ```
 //!
 //! # The `SpellLauncher`
 //!
-//! You can set the command that will be called manually:
+//! You can set the command that will be called by using the `aspell`, `hunspell` and
+//! `ispell` (default value) methods:
 //!
 //! ```
 //! # use ispell::SpellLauncher;
 //! let result = SpellLauncher::new()
-//!              .command("foo")
+//!              .aspell()
 //!              .launch();
 //! ```
-//!
-//! but the easiest way to set which alternative must be used is with
-//! the `aspell` and `hunspell` methods:
 //!
 //! ```
 //! # use ispell::SpellLauncher;
@@ -38,15 +37,26 @@
 //!              .launch();
 //! ```
 //!
+//! You can also set the dictionary that must be used:
+//!
+//! ```
+//! # use ispell::SpellLauncher;
+//! let checker = SpellLauncher::new()
+//!               .aspell()
+//!               .dictionary("en_GB")
+//!               .launch()
+//!               .unwrap();
+//! ```
+//!
 //! # The `SpellChecker`
 //!
 //! If the command has been launched successfully, it will return a `SpellChecker`.
 //!
 //! ## Checking words
 //!
-//! The main usage of this struct is to get the errors
-//! (`IspellError`) the spell checker detects with
-//! `SpellChecker::check`. The `ispell` API returns the position (in 
+//! The main usage of this struct is using the `check` method to get
+//! the errors (`IspellError`) the spell checker detects. The `ispell`
+//! API returns the position (in
 //! characters) from the beginning of the line. This means that, if
 //! you want to be able do to anything with these numbers, you'll have
 //! to call `check` line by line.
@@ -118,9 +128,10 @@
 //!
 //! # Character encoding
 //!
-//! This library tries to set encoding to `utf-8`, but ispell, hunspell and aspell takes different arguments
-//! for that. This is why you should use the `ispell`, `aspell` and `hunspell` methods intead of setting the
-//! command to invoke with the `command` method.
+//! This library tries to set encoding to `utf-8`, but ispell, hunspell and aspell take different arguments
+//! for that (`-T`, `-i` and `--encoding`, respectively). This is why
+//! you should use the `ispell`, `aspell` and `hunspell` methods
+//! intead of setting the command to invoke with the `command` method.
 
 
 mod spell_checker;
