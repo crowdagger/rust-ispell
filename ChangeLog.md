@@ -1,6 +1,10 @@
 ChangeLog 
 =========
 
+unreleased
+------------
+* Added a `.travis.yml` file.
+
 0.3.0 (2016-09-30)
 ------------------
 * Added a `timeout` method to SpellLauncher. This allows to
