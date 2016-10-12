@@ -2,7 +2,7 @@
 name = "ispell"
 version = "0.3.0"
 authors = ["Elisabeth Henry <liz.henry@ouvaton.org>"]
-description = "Easily run ispell or aspell from Rust"
+description = "Easily run ispell, hunspell or aspell from Rust"
 readme = "README.md"
 keywords = ["ispell", "aspell", "spellchecker"]
 repository = "https://github.com/lise-henry/rust-ispell"
