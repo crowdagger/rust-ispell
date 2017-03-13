@@ -140,10 +140,6 @@ impl SpellChecker {
     /// }
     /// ```
     pub fn add_word_to_dictionary(&mut self, word: &str) -> Result<()> {
-        if word.contains(|c:char| !c.is_alphabetic()) {
-            return Err(Error::invalid_word(format!("word '{}' contains non alphabetic characters",
-                                                   word)));
-        }
         try!(self.stdin.write_all(b"*"));
         try!(self.stdin.write_all(word.as_bytes()));
         try!(self.stdin.write_all(b"\n"));
@@ -186,10 +182,6 @@ impl SpellChecker {
     /// }
     /// ```
     pub fn add_word(&mut self, word: &str) -> Result<()> {
-        if word.contains(|c:char| !c.is_alphabetic()) {
-            return Err(Error::invalid_word(format!("word '{}' contains non alphabetic characters",
-                                                   word)));
-        }
         try!(self.stdin.write_all(b"@"));
         try!(self.stdin.write_all(word.as_bytes()));
         try!(self.stdin.write_all(b"\n"));
@@ -228,22 +220,13 @@ impl SpellChecker {
     /// errors, will be more useful.
     pub fn check_raw(&mut self, text: &str) -> Result<Vec<IspellResult>> {
         try!(self.write_str(text));
-
     
-        let n_words = text.split_whitespace().count();
-        let mut output = Vec::with_capacity(n_words);
-        let mut n_lines = 0;
+        let mut output = Vec::new();
 
-        
-        while n_lines < n_words {
-            let s = try!(self.read_str());
+        if let Ok(s) = self.read_str() {
             for line in s.lines() {
-                if n_lines >= n_words {
-                    break;
-                }
-                n_lines += 1;
                 if line.is_empty() {
-                    continue;
+                    break;
                 }
                 let first = line.chars().next().unwrap();
                 match first {
