@@ -16,7 +16,7 @@ use error::{Result, Error};
 ///
 /// * Launches `ispell` with `british` dictionary:
 ///
-/// ```ignore
+/// ```no_run
 /// use ispell::SpellLauncher;
 /// let checker = SpellLauncher::new()
 ///               .dictionary("british")

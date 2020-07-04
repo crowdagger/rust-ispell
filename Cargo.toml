@@ -1,10 +1,11 @@
 [package]
 name = "ispell"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Elisabeth Henry <liz.henry@ouvaton.org>"]
 description = "Easily run ispell, hunspell or aspell from Rust"
 readme = "README.md"
 keywords = ["ispell", "aspell", "spellchecker"]
+categories = ["api-bindings"]
 repository = "https://github.com/lise-henry/rust-ispell"
 documentation = "https://lise-henry.github.io/rust-ispell/ispell/"
 license = "MPL-2.0"

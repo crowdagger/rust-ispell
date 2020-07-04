@@ -63,8 +63,8 @@ impl SpellChecker {
         };
 
         // Read the first line that displays Version
-        //        try!(checker.write_str(""));
-        let s = try!(checker.read_str());
+        //       checker.write_str("")?;
+        let s = checker.read_str()?;
         match s.chars().next() {
             Some('@') => Ok(checker),
             _ => Err(Error::protocol(format!("First line of ispell output doesn't start with '@', aborting")))
@@ -95,12 +95,12 @@ impl SpellChecker {
     /// Write to ispell stdin
     fn write_str(&mut self, text: &str) -> Result<()> {
         // First, clear ispell's stdout just in case
-        try!(self.flush_stdout());
+        self.flush_stdout()?;
         
-        try!(self.stdin.write_all(b"^"));
-        try!(self.stdin.write_all(text.as_bytes()));
-        try!(self.stdin.write_all(b"\n"));
-        try!(self.stdin.flush());
+        self.stdin.write_all(b"^")?;
+        self.stdin.write_all(text.as_bytes())?;
+        self.stdin.write_all(b"\n")?;
+        self.stdin.flush()?;
         Ok(())
     }
 
@@ -112,7 +112,10 @@ impl SpellChecker {
     ///
     /// # Returns
     ///
-    /// An error if `word` contains spaces or illegal characters
+    /// An error if connection to ispell failed, or `word` contains multiple words (i.e., spaces).
+    ///
+    /// Note that a successful return of this method doesn't mean that the word was successfully added, as
+    /// it is possible that it contains invalid character and ispell will reject it.
     ///
     /// # Examples
     ///
@@ -139,28 +142,42 @@ impl SpellChecker {
     ///     assert!(errors.is_empty());
     /// }
     /// ```
+    ///
+    /// Invalid word: contains spaces
+    ///
+    /// ```rust,no_run
+    /// # use ispell::SpellLauncher;
+    ///
+    /// # fn main() {
+    ///     let mut checker = SpellLauncher::new()
+    ///         .launch()
+    ///         .unwrap();
+    ///    
+    ///     let res = checker.add_word_to_dictionary("multiple words");
+    ///     assert!(res.is_err());
+    /// # }
+    /// ```
     pub fn add_word_to_dictionary(&mut self, word: &str) -> Result<()> {
-        try!(self.stdin.write_all(b"*"));
-        try!(self.stdin.write_all(word.as_bytes()));
-        try!(self.stdin.write_all(b"\n"));
+        if word.contains(|c:char| c.is_whitespace()) {
+            return Err(Error::invalid_word(format!("word '{}' contains space(s)",
+                                                   word)));
+        }
+        self.stdin.write_all(b"*")?;
+        self.stdin.write_all(word.as_bytes())?;
+        self.stdin.write_all(b"\n")?;
 
         // Save the dictionary
-        try!(self.stdin.flush());
-        try!(self.stdin.write_all(b"#\n"));
-        try!(self.stdin.flush());
+        self.stdin.flush()?;
+        self.stdin.write_all(b"#\n")?;
+        self.stdin.flush()?;
         Ok(())
     }
 
     /// Add a word to current session.
     ///
-    /// This word won't be memorized the next time you use i/a/hun/spell. If you want this behaviour,
-    /// use `add_word_to_dictionary`.
+    /// Similar to `add_word_to_dictionary`, except `word` won't be memorized the next time you use i/a/hun/spell. 
     ///
-    /// # Returns
-    ///
-    /// An error if `word` contains spaces or illegal characters
-    ///
-    /// ```rust,no_run
+    /// ```rust
     /// use ispell::SpellLauncher;
     ///
     /// fn main() {
@@ -182,10 +199,14 @@ impl SpellChecker {
     /// }
     /// ```
     pub fn add_word(&mut self, word: &str) -> Result<()> {
-        try!(self.stdin.write_all(b"@"));
-        try!(self.stdin.write_all(word.as_bytes()));
-        try!(self.stdin.write_all(b"\n"));
-        try!(self.stdin.flush());
+        if word.contains(|c:char| c.is_whitespace()) {
+            return Err(Error::invalid_word(format!("word '{}' contains space(s)",
+                                                   word)));
+        }
+        self.stdin.write_all(b"@")?;
+        self.stdin.write_all(word.as_bytes())?;
+        self.stdin.write_all(b"\n")?;
+        self.stdin.flush()?;
         Ok(())
     }
     
@@ -196,7 +217,7 @@ impl SpellChecker {
     /// in those errors is the number of characters since the beginning of the line, this method
     /// needs to be called line by line and not on a full document.
     pub fn check(&mut self, text: &str) -> Result<Vec<IspellError>> {
-        let results = try!(self.check_raw(text));
+        let results = self.check_raw(text)?;
         let mut errors = vec!();
 
         for elem in results.into_iter() {
@@ -219,7 +240,7 @@ impl SpellChecker {
     /// there is no errors. Usually, the `check` method, which only returns
     /// errors, will be more useful.
     pub fn check_raw(&mut self, text: &str) -> Result<Vec<IspellResult>> {
-        try!(self.write_str(text));
+        self.write_str(text)?;
     
         let mut output = Vec::new();
 
@@ -240,7 +261,7 @@ impl SpellChecker {
                         output.push(IspellResult::Root(words[1].to_owned()));
                     },
                     '#' => {
-                        let error = try!(get_ispell_error(line, 3));
+                        let error = get_ispell_error(line, 3)?;
                         output.push(IspellResult::None(error));
                     },
                     '&' | '?' => {
@@ -248,7 +269,7 @@ impl SpellChecker {
                         if parts.len() != 2 {
                             return Err(Error::protocol(format!("unexpected output from ispell: {}", line)));
                         }
-                        let mut error = try!(get_ispell_error(parts[0], 4));
+                        let mut error = get_ispell_error(parts[0], 4)?;
                         let suggestions: Vec<_> = parts[1].split(",")
                             .map(|s| s.trim().to_owned())
                             .collect();
@@ -284,8 +305,8 @@ fn get_ispell_error(input: &str, n: usize) -> Result<IspellError> {
         return Err(Error::protocol(format!("unexpected result: {}", input)));
     }
     let misspelled = words[1].to_owned();
-    let position:usize = try!(words[n - 1].parse()
-                              .map_err(|_| Error::protocol(format!("could not parse '{}' as an int", words[2]))));
+    let position:usize = words[n - 1].parse()
+        .map_err(|_| Error::protocol(format!("could not parse '{}' as an int", words[2])))?;
     Ok(IspellError {
         misspelled: misspelled,
         position: position - 1, // remove the '^' character we add for escaping
@@ -294,3 +315,17 @@ fn get_ispell_error(input: &str, n: usize) -> Result<IspellError> {
 }
 
 
+#[test]
+fn add_word() {
+    use spell_launcher::SpellLauncher;
+
+    let mut checker = SpellLauncher::new()
+        .launch()
+        .unwrap();
+        
+    checker.add_word("notaword").unwrap();
+    assert!(checker.check("notaword").unwrap().is_empty());
+
+    checker.add_word("stillnotaword2").unwrap();
+    assert_eq!(checker.check("stillnotaword2").unwrap().len(), 1);
+}

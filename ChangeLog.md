@@ -1,9 +1,9 @@
 ChangeLog 
 =========
 
-unreleased
-------------
-* Added a `.travis.yml` file.
+0.3.1 (2020-07-04)
+----------------------
+- correct reading of check output
 
 0.3.0 (2016-09-30)
 ------------------

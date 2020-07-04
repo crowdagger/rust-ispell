@@ -40,7 +40,7 @@ impl AsyncReader {
     fn read(&mut self) -> Result<String> {
         let mut output = String::new();
         loop {
-            try!(self.stdout.read_line(&mut output));
+            self.stdout.read_line(&mut output)?;
             if output.ends_with("\n\n") || output == "\n" || output.starts_with("@") {
                 break;
             }
